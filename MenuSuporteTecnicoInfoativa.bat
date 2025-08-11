@@ -1,19 +1,19 @@
 @echo off
 rem ************************************************************
-rem * Criado por: Jean Carlos De Jesus Barreto                 *
-rem * GitHub: JCB212                         *
-rem * FERRAMENTA HELP TO DESK V 0.1             *
+rem * Criado por: Jean Carlos De Jesus Barreto      *
+rem * GitHub: JCB212                                *
+rem * FERRAMENTA HELP TO DESK V 0.8                 *
 rem ************************************************************
 
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 0.1
+title FERRAMENTA HELP TO DESK V 0.8
 color 0A
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 0.1
+echo   FERRAMENTA HELP TO DESK V 0.8
 echo   Criado por Jean Carlos De Jesus Barreto
 echo ==================================================
 echo 1. Infraestrutura (Rede, Logs, Firewall)
@@ -21,12 +21,15 @@ echo 2. Sistema (Manutencao, Reparo, Diagnostico)
 echo 3. Impressoras
 echo 4. Sair
 echo ==================================================
-rem O comando CHOICE agora e usado para validar a entrada do usuario
-choice /c 1234 /m "Escolha uma opcao: "
-if %errorlevel%==1 goto infra
-if %errorlevel%==2 goto sistema
-if %errorlevel%==3 goto impressoras
-if %errorlevel%==4 goto sair
+set /p "opcao=Escolha uma opcao: "
+
+if "%opcao%"=="1" goto infra
+if "%opcao%"=="2" goto sistema
+if "%opcao%"=="3" goto impressoras
+if "%opcao%"=="4" goto sair
+echo Opcao invalida.
+pause
+goto menu
 
 rem --- SEÇÃO DE INFRAESTRUTURA ---
 :infra
@@ -41,25 +44,28 @@ echo 6. Testar conectividade de rede (Ping Google)
 echo 7. Resetar configuracoes de rede
 echo 8. Exibir conexoes de rede ativas (Netstat)
 echo 9. Mapear unidade de rede
-echo 10. Abrir configuracoes do Firewall
-echo 11. Liberar porta 3050 (Firebird) no Firewall
-echo 12. Abrir Visualizador de Eventos
-echo 13. Voltar para o menu principal
+echo A. Abrir configuracoes do Firewall
+echo B. Liberar porta 3050 (Firebird) no Firewall
+echo C. Abrir Visualizador de Eventos
+echo D. Voltar para o menu principal
 echo ===========================================
-choice /c 123456789ABCDE /m "Escolha uma opcao: "
-if %errorlevel%==1 goto ipall
-if %errorlevel%==2 goto flushdns
-if %errorlevel%==3 goto flush_navegador
-if %errorlevel%==4 goto pingserv
-if %errorlevel%==5 goto pathping_serv
-if %errorlevel%==6 goto ping_google
-if %errorlevel%==7 goto winsock_completo
-if %errorlevel%==8 goto netstat_info
-if %errorlevel%==9 goto mapear_rede
-if %errorlevel%==10 goto firewall_ui
-if %errorlevel%==11 goto firebird_port
-if %errorlevel%==12 goto eventlog
-if %errorlevel%==13 goto menu
+set /p "opcao=Escolha uma opcao: "
+
+if "%opcao%"=="1" goto ipall
+if "%opcao%"=="2" goto flushdns
+if "%opcao%"=="3" goto flush_navegador
+if "%opcao%"=="4" goto pingserv
+if "%opcao%"=="5" goto pathping_serv
+if "%opcao%"=="6" goto ping_google
+if "%opcao%"=="7" goto winsock_completo
+if "%opcao%"=="8" goto netstat_info
+if "%opcao%"=="9" goto mapear_rede
+if /i "%opcao%"=="a" goto firewall_ui
+if /i "%opcao%"=="b" goto firebird_port
+if /i "%opcao%"=="c" goto eventlog
+if /i "%opcao%"=="d" goto menu
+echo Opcao invalida.
+pause
 goto infra
 
 :ipall
@@ -136,7 +142,7 @@ goto infra
 
 :mapear_rede
 rem Mapeia ou desconecta uma unidade de rede
-set /p acao=Digite 'mapear' para mapear ou 'desconectar' para desconectar: 
+set /p "acao=Digite 'mapear' para mapear ou 'desconectar' para desconectar: "
 if /i "%acao%"=="mapear" goto mapear_rede_executar
 if /i "%acao%"=="desconectar" goto desconectar_rede_executar
 echo Opcao invalida.
@@ -144,15 +150,15 @@ pause
 goto infra
 
 :mapear_rede_executar
-set /p letra=Digite a letra da unidade (ex: Z):
-set /p caminho=Digite o caminho da pasta compartilhada (ex: \\servidor\pasta):
+set /p "letra=Digite a letra da unidade (ex: Z): "
+set /p "caminho=Digite o caminho da pasta compartilhada (ex: \\servidor\pasta): "
 net use %letra%: %caminho%
 echo Unidade mapeada com sucesso!
 pause
 goto infra
 
 :desconectar_rede_executar
-set /p letra=Digite a letra da unidade para desconectar (ex: Z):
+set /p "letra=Digite a letra da unidade para desconectar (ex: Z): "
 net use %letra%: /delete
 echo Unidade desconectada com sucesso!
 pause
@@ -194,47 +200,50 @@ echo 6. Desinstalar programa
 echo 7. Gerenciar aplicativos com Winget
 echo 8. Backup rapido do Registro
 echo 9. Criar Ponto de Restauracao
-echo 10. Abrir Restauracao do Sistema
-echo 11. Abrir Gerenciamento de Disco
-echo 12. Abrir Diagnostico de Memoria
-echo 13. Desfragmentar Disco
-echo 14. Gerenciar Usuarios Locais
-echo 15. Atualizar Group Policy
-echo 16. Testar velocidade de disco
-echo 17. Fazer backup de drivers
-echo 18. Abrir Gerenciador de Tarefas
-echo 19. Executar Comando Personalizado
-echo 20. Liberar acesso a compartilhamentos (SMB)
-echo 21. Compartilhamento avancado de pasta na rede
-echo 22. Verificar Atualizacoes do Windows
-echo 23. Verificar virus com Windows Defender
-echo 24. Voltar para o menu principal
+echo A. Abrir Restauracao do Sistema
+echo B. Abrir Gerenciamento de Disco
+echo C. Abrir Diagnostico de Memoria
+echo D. Desfragmentar Disco
+echo E. Gerenciar Usuarios Locais
+echo F. Atualizar Group Policy
+echo G. Testar velocidade de disco
+echo H. Fazer backup de drivers
+echo I. Abrir Gerenciador de Tarefas
+echo J. Executar Comando Personalizado
+echo K. Liberar acesso a compartilhamentos (SMB)
+echo L. Compartilhamento avancado de pasta na rede
+echo M. Verificar Atualizacoes do Windows
+echo N. Verificar virus com Windows Defender
+echo O. Voltar para o menu principal
 echo ===========================================
-choice /c 123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ /m "Escolha uma opcao: "
-if %errorlevel%==1 goto reiniciar
-if %errorlevel%==2 goto lentidao_completa
-if %errorlevel%==3 goto chkdsk_opcoes
-if %errorlevel%==4 goto sysinfo
-if %errorlevel%==5 goto espaco_disco
-if %errorlevel%==6 goto desinstalar_programa
-if %errorlevel%==7 goto winget_menu
-if %errorlevel%==8 goto backup_registro
-if %errorlevel%==9 goto restorepoint
-if %errorlevel%==10 goto restore_ui
-if %errorlevel%==11 goto diskmgmt
-if %errorlevel%==12 goto memory_diag
-if %errorlevel%==13 goto defrag_opcoes
-if %errorlevel%==14 goto usermgmt
-if %errorlevel%==15 goto updateGp
-if %errorlevel%==16 goto disktest
-if %errorlevel%==17 goto driverbackup
-if %errorlevel%==18 goto taskmgr
-if %errorlevel%==19 goto customcmd
-if %errorlevel%==20 goto compartilhamento
-if %errorlevel%==21 goto compartilhar_avancado
-if %errorlevel%==22 goto windows_updates
-if %errorlevel%==23 goto defender_scan
-if %errorlevel%==24 goto menu
+set /p "opcao=Escolha uma opcao: "
+
+if "%opcao%"=="1" goto reiniciar
+if "%opcao%"=="2" goto lentidao_completa
+if "%opcao%"=="3" goto chkdsk_opcoes
+if "%opcao%"=="4" goto sysinfo
+if "%opcao%"=="5" goto espaco_disco
+if "%opcao%"=="6" goto desinstalar_programa
+if "%opcao%"=="7" goto winget_menu
+if "%opcao%"=="8" goto backup_registro
+if "%opcao%"=="9" goto restorepoint
+if /i "%opcao%"=="a" goto restore_ui
+if /i "%opcao%"=="b" goto diskmgmt
+if /i "%opcao%"=="c" goto memory_diag
+if /i "%opcao%"=="d" goto defrag_opcoes
+if /i "%opcao%"=="e" goto usermgmt
+if /i "%opcao%"=="f" goto updateGp
+if /i "%opcao%"=="g" goto disktest
+if /i "%opcao%"=="h" goto driverbackup
+if /i "%opcao%"=="i" goto taskmgr
+if /i "%opcao%"=="j" goto customcmd
+if /i "%opcao%"=="k" goto compartilhamento
+if /i "%opcao%"=="l" goto compartilhar_avancado
+if /i "%opcao%"=="m" goto windows_updates
+if /i "%opcao%"=="n" goto defender_scan
+if /i "%opcao%"=="o" goto menu
+echo Opcao invalida.
+pause
 goto sistema
 
 :reiniciar
@@ -266,7 +275,7 @@ goto sistema
 
 :escolher_drive
 rem Funcao para permitir que o usuario escolha a unidade
-set /p drive=Digite a letra da unidade (ex: C): 
+set /p "drive=Digite a letra da unidade (ex: C): "
 set "drive=%drive::=%"
 if not exist "%drive%:" (
     echo Unidade "%drive%" nao encontrada. Tente novamente.
@@ -308,7 +317,7 @@ goto sistema
 rem Lista os programas e desinstala o selecionado usando PowerShell
 echo Listando programas instalados (pode levar alguns segundos)...
 powershell -command "Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName,Publisher,InstallDate | Format-Table –AutoSize"
-set /p nome_programa=Digite o nome EXATO do programa para desinstalar:
+set /p "nome_programa=Digite o nome EXATO do programa para desinstalar: "
 wmic product where name="%nome_programa%" call uninstall /nointeractive
 pause
 goto sistema
@@ -325,13 +334,15 @@ echo 4. Atualizar todos os aplicativos
 echo 5. Desinstalar um aplicativo
 echo 6. Voltar
 echo ==================================================
-choice /c 123456 /m "Escolha uma opcao: "
-if %errorlevel%==1 goto wingetlist
-if %errorlevel%==2 goto wingetsearch
-if %errorlevel%==3 goto wingetinstall
-if %errorlevel%==4 goto wingetupgrade
-if %errorlevel%==5 goto wingetuninstall
-if %errorlevel%==6 goto sistema
+set /p "opcao=Escolha uma opcao: "
+if "%opcao%"=="1" goto wingetlist
+if "%opcao%"=="2" goto wingetsearch
+if "%opcao%"=="3" goto wingetinstall
+if "%opcao%"=="4" goto wingetupgrade
+if "%opcao%"=="5" goto wingetuninstall
+if "%opcao%"=="6" goto sistema
+echo Opcao invalida.
+pause
 goto winget_menu
 
 :wingetlist
@@ -340,13 +351,13 @@ pause
 goto winget_menu
 
 :wingetsearch
-set /p appsearch=Digite o nome do aplicativo para procurar: 
+set /p "appsearch=Digite o nome do aplicativo para procurar: "
 winget search "%appsearch%" | more
 pause
 goto winget_menu
 
 :wingetinstall
-set /p appinstall=Digite o ID ou nome do aplicativo para instalar: 
+set /p "appinstall=Digite o ID ou nome do aplicativo para instalar: "
 winget install "%appinstall%"
 pause
 goto winget_menu
@@ -357,7 +368,7 @@ pause
 goto winget_menu
 
 :wingetuninstall
-set /p appuninstall=Digite o ID ou nome do aplicativo para desinstalar: 
+set /p "appuninstall=Digite o ID ou nome do aplicativo para desinstalar: "
 winget uninstall "%appuninstall%"
 pause
 goto winget_menu
@@ -473,8 +484,8 @@ goto sistema
 
 :compartilhar_avancado
 rem Comando para compartilhar uma pasta na rede com permissao total para 'Todos'
-set /p pasta=Digite o caminho COMPLETO da pasta que deseja compartilhar (ex: C:\dados): 
-set /p nome_compartilhamento=Digite o NOME do compartilhamento:
+set /p "pasta=Digite o caminho COMPLETO da pasta que deseja compartilhar (ex: C:\dados): "
+set /p "nome_compartilhamento=Digite o NOME do compartilhamento: "
 net share "%nome_compartilhamento%"="%pasta%" /GRANT:Everyone,FULL
 echo A pasta '%pasta%' foi compartilhada como '%nome_compartilhamento%' com acesso total para 'Todos'.
 pause
@@ -508,16 +519,19 @@ echo 7. Reiniciar Spooler de Impressao
 echo 8. Limpar Fila de Impressao e Reiniciar Spooler
 echo 9. Voltar para o menu principal
 echo ===========================================
-choice /c 123456789 /m "Escolha uma opcao: "
-if %errorlevel%==1 goto listar_impressoras
-if %errorlevel%==2 goto compartilhar_impressora
-if %errorlevel%==3 goto add_impressora
-if %errorlevel%==4 goto erro11b
-if %errorlevel%==5 goto erro0bcb
-if %errorlevel%==6 goto erro709 
-if %errorlevel%==7 goto reiniciar_spooler
-if %errorlevel%==8 goto limpar_e_reiniciar_spooler
-if %errorlevel%==9 goto menu
+set /p "opcao=Escolha uma opcao: "
+
+if "%opcao%"=="1" goto listar_impressoras
+if "%opcao%"=="2" goto compartilhar_impressora
+if "%opcao%"=="3" goto add_impressora
+if "%opcao%"=="4" goto erro11b
+if "%opcao%"=="5" goto erro0bcb
+if "%opcao%"=="6" goto erro709 
+if "%opcao%"=="7" goto reiniciar_spooler
+if "%opcao%"=="8" goto limpar_e_reiniciar_spooler
+if "%opcao%"=="9" goto menu
+echo Opcao invalida.
+pause
 goto impressoras
 
 :listar_impressoras
@@ -531,7 +545,7 @@ goto impressoras
 rem Lista as impressoras para o usuario escolher
 echo Impressoras disponiveis para compartilhamento:
 powershell -command "Get-Printer | Format-Table Name -AutoSize" | more
-set /p nomeImpressora=Digite o NOME da impressora que deseja compartilhar: 
+set /p "nomeImpressora=Digite o NOME da impressora que deseja compartilhar: "
 rem Adiciona o comando para compartilhar a impressora
 powershell -Command "Set-Printer -Name '%nomeImpressora%' -Shared:$true -ShareName '%nomeImpressora%'"
 echo Impressora "%nomeImpressora%" compartilhada com sucesso.
