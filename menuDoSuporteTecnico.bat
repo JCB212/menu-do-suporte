@@ -26,64 +26,97 @@ echo Opcao invalida.
 pause
 goto menu
 
-rem --- SEÇÃO DE REDE ---
+rem --- SEÇÃO DE REDE (ATUALIZADA) ---
 :rede
 cls
 echo ================== REDE ==================
 echo 0 - Voltar para o menu inicial
 echo 1 - Verificar informacoes completas da rede
 echo 2 - Flush DNS
-echo 3 - Ping Servidor
-echo 4 - Resetar configuracoes de rede (Winsock)
-echo 5 - Rotas de rede
+echo 3 - Flush DNS do Navegador
+echo 4 - Ping Servidor
+echo 5 - Resetar configuracoes de rede
+echo 6 - Rotas de rede
+echo 7 - Teste de Velocidade de Rede
 echo ===========================================
 set /p opcao=Escolha uma opcao: 
 
 if "%opcao%"=="0" goto menu
 if "%opcao%"=="1" goto ipall
 if "%opcao%"=="2" goto flushdns
-if "%opcao%"=="3" goto pingserv 
-if "%opcao%"=="4" goto winsock 
-if "%opcao%"=="5" goto rotas
+if "%opcao%"=="3" goto flush_navegador
+if "%opcao%"=="4" goto pingserv 
+if "%opcao%"=="5" goto winsock_completo
+if "%opcao%"=="6" goto rotas
+if "%opcao%"=="7" goto speedtest
 
 echo Opcao invalida.
 pause
-goto menu
+goto rede
 
 :ipall
 rem Exibe todas as configurações de IP
 ipconfig /all
 pause
-goto menu
+goto rede
 
 :flushdns
 rem Limpa o cache de DNS
 ipconfig /flushdns
 pause
-goto menu
+goto rede
+
+:flush_navegador
+rem Limpa o cache DNS dos navegadores Chrome e Firefox.
+echo Limpando cache do navegador...
+rem Comando para Chrome
+if exist "%LocalAppData%\Google\Chrome\User Data\Default\Cache" (
+    del /s /q "%LocalAppData%\Google\Chrome\User Data\Default\Cache\*.*"
+)
+rem Comando para Firefox
+if exist "%AppData%\Mozilla\Firefox\Profiles" (
+    for /d %%d in ("%AppData%\Mozilla\Firefox\Profiles\*") do (
+        if exist "%%d\cache2" (
+            rd /s /q "%%d\cache2"
+        )
+    )
+)
+echo Cache do navegador limpo.
+pause
+goto rede
 
 :pingserv
 rem Solicita o IP ou nome do servidor e executa um ping
 set /p ipNome=Digite o nome ou IP do Servidor:
 ping %ipNome%
 pause
-goto menu
+goto rede
 
-:winsock
-rem Reseta as configurações de Winsock e IP
+:winsock_completo
+rem Reseta as configurações de Winsock e IP de forma completa
+echo Resetando configuracoes de rede...
 netsh winsock reset
 netsh int ip reset
-echo É necessário reiniciar o computador.
+ipconfig /release
+ipconfig /renew
+echo É necessário reiniciar o computador para que as alteracoes tenham efeito.
 pause
-goto menu
+goto rede
 
 :rotas
 rem Exibe a tabela de roteamento de rede
 route print
 pause
-goto menu
+goto rede
 
-rem --- SEÇÃO DE IMPRESSORAS (ATUALIZADA) ---
+:speedtest
+rem Abre o site do Speedtest no navegador padrão
+echo Abrindo site de teste de velocidade...
+start "" https://www.speedtest.net
+pause
+goto rede
+
+rem --- SEÇÃO DE IMPRESSORAS ---
 :impressoras
 cls
 echo =============== IMPRESSORAS ===============
@@ -179,10 +212,12 @@ echo 0 - Voltar para o menu inicial
 echo 1 - Reiniciar Computador
 echo 2 - Lentidao (Limpar temp, Prefetch, etc)
 echo 3 - Atualizar Group Policy
-echo 4 - Processos com maior uso de CPU
-echo 5 - Liberar acesso a compartilhamentos (SMB)
-echo 6 - Compartilhamento avancado de pasta na rede
-echo 7 - Liberar porta 3050 (Firebird) no Firewall
+echo 4 - Exibir espaco em disco
+echo 5 - Desinstalar programa
+echo 6 - Backup rapido do Registro
+echo 7 - Liberar acesso a compartilhamentos (SMB)
+echo 8 - Compartilhamento avancado de pasta na rede
+echo 9 - Liberar porta 3050 (Firebird) no Firewall
 echo ===========================================
 set /p opcao=Escolha uma opcao: 
 
@@ -190,10 +225,12 @@ if "%opcao%"=="0" goto menu
 if "%opcao%"=="1" goto reiniciar
 if "%opcao%"=="2" goto lentidao
 if "%opcao%"=="3" goto updateGp 
-if "%opcao%"=="4" goto cpu 
-if "%opcao%"=="5" goto compartilhamento
-if "%opcao%"=="6" goto compartilhar_avancado
-if "%opcao%"=="7" goto firebird_port
+if "%opcao%"=="4" goto espaco_disco
+if "%opcao%"=="5" goto desinstalar_programa
+if "%opcao%"=="6" goto backup_registro
+if "%opcao%"=="7" goto compartilhamento
+if "%opcao%"=="8" goto compartilhar_avancado
+if "%opcao%"=="9" goto firebird_port
 
 echo Opcao invalida.
 pause
@@ -231,9 +268,27 @@ gpupdate /force
 pause
 goto sistema
 
-:cpu
-rem Lista os processos com maior uso de CPU e os ordena
-wmic path Win32_PerfFormattedData_PerfProc_Process get Name,PercentProcessorTime | sort
+:espaco_disco
+rem Exibe o espaço livre e total em disco
+echo Espaco em disco:
+wmic logicaldisk get deviceid,volumename,size,freespace
+pause
+goto sistema
+
+:desinstalar_programa
+rem Lista os programas e desinstala o selecionado
+echo Listando programas instalados (pode levar alguns segundos)...
+wmic product get name | more
+set /p nome_programa=Digite o nome do programa para desinstalar:
+wmic product where name="%nome_programa%" call uninstall /nointeractive
+pause
+goto sistema
+
+:backup_registro
+rem Realiza um backup rápido do registro
+set "backupPath=%USERPROFILE%\Desktop\Backup_Registro_%date:~-4,4%%date:~-7,2%%date:~-10,2%_%time:~0,2%%time:~3,2%%time:~6,2%.reg"
+reg export "HKLM\SYSTEM\CurrentControlSet" "%backupPath%" /y
+echo Backup do registro salvo em: %backupPath%
 pause
 goto sistema
 
