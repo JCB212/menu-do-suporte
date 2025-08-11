@@ -9,18 +9,6 @@ rem Define o título da janela do prompt de comando
 title FERRAMENTA HELP TO DESK V 0.1
 color 0A
 
-rem --- Verifica se o script esta sendo executado como administrador ---
-rem Usa 'net session' para verificar privilegios, pois e mais confiavel
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo.
-    echo Este script precisa ser executado como administrador.
-    echo Por favor, clique com o botao direito no arquivo e selecione "Executar como administrador".
-    echo.
-    pause
-    goto sair
-)
-
 rem Define o ponto de entrada principal do menu
 :menu
 cls
