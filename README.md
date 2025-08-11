@@ -1,32 +1,72 @@
 # menu-do-suporte
-Script batch (.bat) interativo para otimizar suporte técnico no Windows, automatizando reinício do sistema, limpeza de temporários, diagnóstico de rede, correção de erros comuns de impressão e ajustes de compartilhamento entre Windows 10 e 11 via PowerShell, aumentando a eficiência e reduzindo erros humanos.
 
-Este script em batch foi desenvolvido para facilitar tarefas rotineiras de suporte técnico no Windows. Ele apresenta um menu interativo com diversas opções automatizadas para diagnóstico e correção de problemas comuns em estações de trabalho.
+Script em batch (.bat) interativo para otimizar o suporte técnico em ambientes Windows. Ele automatiza uma série de tarefas de diagnóstico e correção de problemas comuns, aumentando a eficiência e reduzindo erros humanos.
+
+Este script é uma ferramenta poderosa para técnicos de suporte, analistas de TI e administradores de rede, oferecendo uma interface de menu simples para executar comandos complexos e solucionar problemas de forma padronizada.
 
 ## Funcionalidades
 
-- Reinício rápido do computador
-- Limpeza de arquivos temporários e verificação de integridade do sistema (SFC)
-- Flush do DNS
-- Exibição completa das configurações de rede
-- Ping personalizado para servidores
-- Correções automatizadas para erros de impressão:
+### 1. Rede
+
+**Diagnóstico:**
+
+- Exibe informações de rede completas (`ipconfig /all`)
+- Limpa o cache DNS (`ipconfig /flushdns`)
+- Realiza ping em um servidor específico
+- Exibe a tabela de roteamento de rede
+
+**Correção:**
+
+- Reseta as configurações de rede (Winsock e IP)
+
+### 2. Impressoras
+
+**Gerenciamento:**
+
+- Lista todas as impressoras instaladas no sistema
+- Oferece uma opção interativa para compartilhar qualquer impressora na rede
+
+**Correção de Erros Comuns:**
+
+- Solução automática para os erros de impressão:
   - 0x0000011b
   - 0x00000bcb
   - 0x00000709
-- Reinício do spooler de impressão
-- Liberação de compartilhamento de arquivos entre Windows 10 e 11 (via PowerShell)
+- Reinicia o serviço de Spooler de Impressão
+- Opção completa para:
+  - Parar o Spooler
+  - Apagar todos os arquivos de impressão da fila
+  - Reiniciar o Spooler
+  - Corrigindo problemas de documentos travados
+
+### 3. Sistema
+
+**Manutenção e Diagnóstico:**
+
+- Reinicia o computador
+- Executa uma rotina de lentidão:
+  - Abre pastas temporárias
+  - Limpa arquivos indesejados
+- Executa o `sfc /scannow` para verificar a integridade do sistema
+- Força a atualização da Política de Grupo (`gpupdate /force`)
+- Lista os processos com maior uso de CPU
+
+**Configuração Avançada:**
+
+- Libera o acesso a compartilhamentos de arquivos via SMB entre versões do Windows
+- Permite o compartilhamento avançado de qualquer pasta na rede com permissão total
+- Adiciona regras de entrada e saída no Firewall do Windows para liberar a porta **3050**, usada pelo banco de dados **Firebird**
 
 ## Requisitos
 
-- Executar como **administrador**
-- Compatível com Windows 10, 11
+- Executar o script como **administrador**
+- Compatível com **Windows 10** e **Windows 11**
 
 ## Como usar
 
-1. Dê dois cliques no arquivo `.bat` ou execute pelo terminal como administrador.
-2. Escolha a opção desejada no menu digitando o número correspondente.
-3. O script executará automaticamente as ações selecionadas.
+1. Clique duas vezes no arquivo `.bat` ou execute-o a partir do terminal como administrador.
+2. Um menu interativo será exibido.
+3. Digite o número correspondente à opção desejada.
+4. O script executará automaticamente as ações selecionadas.
 
-
-📂 Ideal para técnicos de suporte, analistas de TI e administradores de redes que desejam padronizar processos e agilizar atendimentos.
+> ⚠️ **Observação**: O script utiliza comandos do **PowerShell** em algumas opções para obter resultados mais detalhados e realizar configurações avançadas.
