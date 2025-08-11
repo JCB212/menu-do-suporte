@@ -10,7 +10,8 @@ title FERRAMENTA HELP TO DESK V 0.1
 color 0A
 
 rem --- Verifica se o script esta sendo executado como administrador ---
->nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config.nt"
+rem Usa 'net session' para verificar privilegios, pois e mais confiavel
+net session >nul 2>&1
 if %errorlevel% neq 0 (
     echo.
     echo Este script precisa ser executado como administrador.
