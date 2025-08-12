@@ -1,6 +1,8 @@
 @echo off
 rem ************************************************************
-rem * Criado por: Jean Carlos De Jesus Barreto      *
+rem * Criado por: Alice Dzindzik                    *
+rem * Modificado por: Jean Carlos De Jesus Barreto  *
+rem * GitHub: AliceDzindzik                         *
 rem * GitHub: JCB212                                *
 rem * FERRAMENTA HELP TO DESK V 0.8                 *
 rem ************************************************************
@@ -14,7 +16,8 @@ rem Define o ponto de entrada principal do menu
 cls
 echo ==================================================
 echo   FERRAMENTA HELP TO DESK V 0.8
-echo   Criado por Jean Carlos De Jesus Barreto
+echo   Criado por Alice Dzindzik
+echo   Modificado por Jean Carlos De Jesus Barreto
 echo ==================================================
 echo 1. Infraestrutura (Rede, Logs, Firewall)
 echo 2. Sistema (Manutencao, Reparo, Diagnostico)
