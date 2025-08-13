@@ -4,18 +4,18 @@ rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
-rem * FERRAMENTA HELP TO DESK V 1.0                            *
+rem * FERRAMENTA HELP TO DESK V 1.1                            *
 rem ************************************************************
 
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 1.0
+title FERRAMENTA HELP TO DESK V 1.1
 color 0A
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 1.0
+echo   FERRAMENTA HELP TO DESK V 1.1
 echo   Criado por Alice Dzindzik
 echo   Modificado por Jean Carlos De Jesus Barreto
 echo ==================================================
@@ -661,7 +661,7 @@ echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
 if "%opcao%"=="1" goto listar_impressoras
-if "%opcao%"=="2" goto compartilhar_impressora_fluxo
+if "%opcao%"=="2" goto compartilhar_impressora_flow
 if "%opcao%"=="3" goto add_impressora
 if "%opcao%"=="4" goto erro11b
 if "%opcao%"=="5" goto erro0bcb
@@ -674,39 +674,101 @@ echo Opcao invalida.
 pause
 goto impressoras
 
-:compartilhar_impressora_fluxo
+:compartilhar_impressora_flow
 rem Fluxo completo para compartilhar impressora, evitando o erro 0x00000709
+setlocal enabledelayedexpansion
 cls
 echo Tentando corrigir erro 0x00000709 antes de compartilhar...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
 echo Correcao do erro 0x00000709 aplicada. Prosseguindo...
 echo.
+
+:listar_impressoras_numeradas
+cls
+echo ===========================================
+echo   SELECIONAR IMPRESSORA PARA COMPARTILHAR
+echo ===========================================
 echo Impressoras disponiveis:
-powershell -command "Get-Printer | Format-Table Name,PortName,DriverName -AutoSize" | more
 echo.
-set /p "nomeAtual=Digite o NOME ATUAL da impressora: "
-set /p "opcao_renomear=Deseja RENOMEAR a impressora antes de compartilhar? (S/N): "
-if /i "%opcao_renomear%"=="S" goto renomear_impressora
-if /i "%opcao_renomear%"=="N" goto compartilhar_sem_renomear
+set "contador=0"
+for /f "delims=" %%I in ('powershell -command "Get-Printer | Select-Object -ExpandProperty Name"') do (
+    set /a contador+=1
+    set "impressora_!contador!=%%I"
+    echo !contador!. %%I
+)
+echo.
+echo 0. Voltar
+echo ===========================================
+set /p "escolha=Escolha uma impressora pelo numero: "
+if "!escolha!"=="0" (
+    endlocal
+    goto impressoras
+)
+
+set "nome_impressora_original=!impressora_%escolha%!"
+if not defined nome_impressora_original (
+    echo Escolha invalida.
+    pause
+    goto listar_impressoras_numeradas
+)
+echo Voce escolheu: "!nome_impressora_original!"
+echo.
+
+:renomear_menu
+set /p "opcao_renomear=Deseja RENOMEAR esta impressora? (S/N): "
+if /i "!opcao_renomear!"=="S" goto renomear_impressora_prompt
+if /i "!opcao_renomear!"=="N" goto compartilhar_sem_renomear
 echo Opcao invalida.
 pause
-goto impressoras
+goto renomear_menu
 
-:renomear_impressora
-set /p "nomeNovo=Digite o NOVO NOME para a impressora: "
-powershell -Command "Rename-Printer -Name '%nomeAtual%' -NewName '%nomeNovo%'"
-echo Impressora renomeada para '%nomeNovo%'.
-set "nomeImpressora=%nomeNovo%"
-goto compartilhar_impressora_executar
+:renomear_impressora_prompt
+cls
+echo ===========================================
+echo   RENOMEAR IMPRESSORA
+echo ===========================================
+echo Nome atual: !nome_impressora_original!
+set /p "nome_impressora_novo=Digite o NOVO nome para a impressora: "
+
+:renomear_sub_menu
+cls
+echo ===========================================
+echo   CONFIRMAR NOVO NOME
+echo ===========================================
+echo Novo nome: !nome_impressora_novo!
+echo.
+echo 1 - Salvar e Compartilhar
+echo 2 - Editar nome
+echo 3 - Voltar para pergunta anterior (S/N)
+echo 0 - Voltar para o menu principal
+echo ===========================================
+set /p "opcao_salvar=Escolha uma opcao: "
+
+if "%opcao_salvar%"=="1" (
+    powershell -Command "Rename-Printer -Name '%nome_impressora_original%' -NewName '%nome_impressora_novo%'"
+    echo Impressora renomeada para '%nome_impressora_novo%'.
+    set "nome_final_compartilhar=!nome_impressora_novo!"
+    goto compartilhar_final
+)
+if "%opcao_salvar%"=="2" goto renomear_impressora_prompt
+if "%opcao_salvar%"=="3" goto renomear_menu
+if "%opcao_salvar%"=="0" (
+    endlocal
+    goto impressoras
+)
+echo Opcao invalida.
+pause
+goto renomear_sub_menu
 
 :compartilhar_sem_renomear
-set "nomeImpressora=%nomeAtual%"
-goto compartilhar_impressora_executar
+set "nome_final_compartilhar=!nome_impressora_original!"
+goto compartilhar_final
 
-:compartilhar_impressora_executar
-powershell -Command "Set-Printer -Name '%nomeImpressora%' -Shared:$true -ShareName '%nomeImpressora%'"
-echo Impressora "%nomeImpressora%" compartilhada com sucesso.
+:compartilhar_final
+powershell -Command "Set-Printer -Name '%nome_final_compartilhar%' -Shared:$true -ShareName '%nome_final_compartilhar%'"
+echo Impressora "%nome_final_compartilhar%" compartilhada com sucesso.
 pause
+endlocal
 goto impressoras
 
 :listar_impressoras
