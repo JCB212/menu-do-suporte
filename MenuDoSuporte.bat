@@ -1,21 +1,21 @@
 @echo off
 rem ************************************************************
-rem * Criado por: Alice Dzindzik                    *
-rem * Modificado por: Jean Carlos De Jesus Barreto  *
-rem * GitHub: AliceDzindzik                         *
-rem * GitHub: JCB212                                *
-rem * FERRAMENTA HELP TO DESK V 0.8                 *
+rem * Criado por: Alice Dzindzik                               *
+rem * Modificado por: Jean Carlos De Jesus Barreto             *
+rem * GitHub: AliceDzindzik                                    *
+rem * GitHub: JCB212                                           *
+rem * FERRAMENTA HELP TO DESK V 0.9                            *
 rem ************************************************************
 
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 0.8
+title FERRAMENTA HELP TO DESK V 0.9
 color 0A
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 0.8
+echo   FERRAMENTA HELP TO DESK V 0.9
 echo   Criado por Alice Dzindzik
 echo   Modificado por Jean Carlos De Jesus Barreto
 echo ==================================================
@@ -50,7 +50,8 @@ echo 9. Mapear unidade de rede
 echo A. Abrir configuracoes do Firewall
 echo B. Liberar porta 3050 (Firebird) no Firewall
 echo C. Abrir Visualizador de Eventos
-echo D. Voltar para o menu principal
+echo D. Ver adaptadores de rede (Nova)
+echo E. Voltar para o menu principal
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
@@ -66,7 +67,8 @@ if "%opcao%"=="9" goto mapear_rede
 if /i "%opcao%"=="a" goto firewall_ui
 if /i "%opcao%"=="b" goto firebird_port
 if /i "%opcao%"=="c" goto eventlog
-if /i "%opcao%"=="d" goto menu
+if /i "%opcao%"=="d" goto ncpa_cpl
+if /i "%opcao%"=="e" goto menu
 echo Opcao invalida.
 pause
 goto infra
@@ -190,6 +192,13 @@ eventvwr.msc
 pause
 goto infra
 
+:ncpa_cpl
+rem Abre a tela de adaptadores de rede
+echo Abrindo adaptadores de rede...
+start ncpa.cpl
+pause
+goto infra
+
 rem --- SEÇÃO DE SISTEMA ---
 :sistema
 cls
@@ -203,21 +212,31 @@ echo 6. Desinstalar programa
 echo 7. Gerenciar aplicativos com Winget
 echo 8. Backup rapido do Registro
 echo 9. Criar Ponto de Restauracao
-echo A. Abrir Restauracao do Sistema
-echo B. Abrir Gerenciamento de Disco
-echo C. Abrir Diagnostico de Memoria
-echo D. Desfragmentar Disco
-echo E. Gerenciar Usuarios Locais
-echo F. Atualizar Group Policy
-echo G. Testar velocidade de disco
-echo H. Fazer backup de drivers
-echo I. Abrir Gerenciador de Tarefas
-echo J. Executar Comando Personalizado
-echo K. Liberar acesso a compartilhamentos (SMB)
-echo L. Compartilhamento avancado de pasta na rede
-echo M. Verificar Atualizacoes do Windows
-echo N. Verificar virus com Windows Defender
-echo O. Voltar para o menu principal
+echo A. Limpeza de arquivos temporarios (Nova)
+echo B. Reset do Windows Update (Nova)
+echo C. Limpeza de logs de eventos (Nova)
+echo D. Ver status dos principais servicos (Nova)
+echo E. Backup dos logs de eventos (Nova)
+echo F. Visualizar dispositivos USB conectados (Nova)
+echo G. Abertura de chamado (Nova)
+echo H. Testar velocidade da internet (Nova)
+echo I. Verificar status do antivirus (Nova)
+echo J. Abrir Restauracao do Sistema
+echo K. Abrir Gerenciamento de Disco
+echo L. Abrir Gerenciador de Dispositivos (Nova)
+echo M. Abrir Gerenciador de Programas (Nova)
+echo N. Abrir Diagnostico de Memoria
+echo O. Desfragmentar Disco
+echo P. Gerenciar Usuarios Locais
+echo Q. Atualizar Group Policy
+echo R. Testar velocidade de disco
+echo S. Fazer backup de drivers
+echo T. Abrir Gerenciador de Tarefas
+echo U. Executar Comando Personalizado
+echo V. Liberar acesso a compartilhamentos (SMB)
+echo W. Compartilhamento avancado de pasta na rede
+echo X. Verificar Atualizacoes do Windows
+echo Y. Voltar para o menu principal
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
@@ -230,21 +249,31 @@ if "%opcao%"=="6" goto desinstalar_programa
 if "%opcao%"=="7" goto winget_menu
 if "%opcao%"=="8" goto backup_registro
 if "%opcao%"=="9" goto restorepoint
-if /i "%opcao%"=="a" goto restore_ui
-if /i "%opcao%"=="b" goto diskmgmt
-if /i "%opcao%"=="c" goto memory_diag
-if /i "%opcao%"=="d" goto defrag_opcoes
-if /i "%opcao%"=="e" goto usermgmt
-if /i "%opcao%"=="f" goto updateGp
-if /i "%opcao%"=="g" goto disktest
-if /i "%opcao%"=="h" goto driverbackup
-if /i "%opcao%"=="i" goto taskmgr
-if /i "%opcao%"=="j" goto customcmd
-if /i "%opcao%"=="k" goto compartilhamento
-if /i "%opcao%"=="l" goto compartilhar_avancado
-if /i "%opcao%"=="m" goto windows_updates
-if /i "%opcao%"=="n" goto defender_scan
-if /i "%opcao%"=="o" goto menu
+if /i "%opcao%"=="a" goto limpeza_temp
+if /i "%opcao%"=="b" goto update_reset
+if /i "%opcao%"=="c" goto limpar_logs
+if /i "%opcao%"=="d" goto servicos_status
+if /i "%opcao%"=="e" goto backup_logs_eventos
+if /i "%opcao%"=="f" goto usb_check
+if /i "%opcao%"=="g" goto abrir_chamado
+if /i "%opcao%"=="h" goto testar_velocidade
+if /i "%opcao%"=="i" goto antivirus_status
+if /i "%opcao%"=="j" goto restore_ui
+if /i "%opcao%"=="k" goto diskmgmt
+if /i "%opcao%"=="l" goto devmgmt_cpl
+if /i "%opcao%"=="m" goto appwiz_cpl
+if /i "%opcao%"=="n" goto memory_diag
+if /i "%opcao%"=="o" goto defrag_opcoes
+if /i "%opcao%"=="p" goto usermgmt
+if /i "%opcao%"=="q" goto updateGp
+if /i "%opcao%"=="r" goto disktest
+if /i "%opcao%"=="s" goto driverbackup
+if /i "%opcao%"=="t" goto taskmgr
+if /i "%opcao%"=="u" goto customcmd
+if /i "%opcao%"=="v" goto compartilhamento
+if /i "%opcao%"=="w" goto compartilhar_avancado
+if /i "%opcao%"=="x" goto windows_updates
+if /i "%opcao%"=="y" goto menu
 echo Opcao invalida.
 pause
 goto sistema
@@ -393,6 +422,105 @@ echo Ponto de restauracao criado com sucesso!
 pause
 goto sistema
 
+:limpeza_temp
+rem Limpa arquivos temporarios (do IT Fast)
+cls
+echo Limpando arquivos temporarios...
+del /s /f /q "%TEMP%\*"
+del /s /f /q "C:\Windows\Temp\*"
+echo Concluido.
+pause
+goto sistema
+
+:update_reset
+rem Reseta os componentes do Windows Update (do IT Fast)
+cls
+echo Resetando componentes do Windows Update...
+net stop wuauserv
+net stop cryptSvc
+net stop bits
+net stop msiserver
+ren C:\Windows\SoftwareDistribution SoftwareDistribution.old
+ren C:\Windows\System32\catroot2 catroot2.old
+net start wuauserv
+net start cryptSvc
+net start bits
+net start msiserver
+echo Concluido.
+pause
+goto sistema
+
+:limpar_logs
+rem Limpa todos os logs de eventos (do IT Fast)
+cls
+echo Limpando logs de eventos...
+for /F "tokens=*" %%1 in ('wevtutil.exe el') do wevtutil.exe cl "%%1"
+echo Concluido.
+pause
+goto sistema
+
+:servicos_status
+rem Verifica o status dos servicos principais (do IT Fast)
+cls
+echo Verificando status de servicos principais...
+sc query wuauserv
+sc query bits
+sc query dhcp
+sc query dnscache
+sc query nlasvc
+sc query netprofm
+pause
+goto sistema
+
+:backup_logs_eventos
+rem Cria backup dos logs de eventos (do IT Fast)
+cls
+echo Criando backup dos logs de eventos...
+mkdir C:\BackupLogs
+wevtutil epl Application C:\BackupLogs\Application.evtx
+wevtutil epl System C:\BackupLogs\System.evtx
+echo Backup concluido em C:\BackupLogs
+pause
+goto sistema
+
+:usb_check
+rem Verifica dispositivos USB conectados (do IT Fast)
+@echo off
+cls
+echo Verificando dispositivos USB conectados...
+REM Verifica se há dispositivos USB conectados
+wmic path CIM_LogicalDevice where "Description like 'USB%'" get Name, Description | findstr /i "USB" >nul
+if %errorlevel%==0 (
+    echo Dispositivos USB conectados:
+    wmic path CIM_LogicalDevice where "Description like 'USB%'" get Name, Description
+) else (
+    echo Nenhum dispositivo USB encontrado.
+)
+pause
+goto sistema
+
+:abrir_chamado
+rem Abre o link para a pagina de abertura de chamado (do IT Fast)
+start https://dufryprod.service-now.com/dufry_sp?id=sub_ticket
+echo Abrindo pagina de abertura de chamado.
+pause
+goto sistema
+
+:testar_velocidade
+rem Abre o site para teste de velocidade (do IT Fast)
+start https://www.fast.com
+echo Abrindo site de teste de velocidade.
+pause
+goto sistema
+
+:antivirus_status
+rem Verifica o status do Windows Defender (do IT Fast)
+cls
+echo Verificando status do Windows Defender...
+powershell -command "Get-MpComputerStatus | Select AMServiceEnabled,AntivirusEnabled,RealTimeProtectionEnabled"
+pause
+goto sistema
+
 :restore_ui
 rem Abre a interface de Restauracao do Sistema
 echo Abrindo Restauracao do Sistema...
@@ -404,6 +532,20 @@ goto sistema
 rem Abre a ferramenta de Gerenciamento de Disco
 echo Abrindo Gerenciamento de Disco...
 diskmgmt.msc
+pause
+goto sistema
+
+:devmgmt_cpl
+rem Abre o Gerenciador de Dispositivos (Nova)
+echo Abrindo Gerenciador de Dispositivos...
+start devmgmt.msc
+pause
+goto sistema
+
+:appwiz_cpl
+rem Abre a tela de programas instalados (Nova)
+echo Abrindo lista de programas instalados...
+start appwiz.cpl
 pause
 goto sistema
 
@@ -501,13 +643,6 @@ echo Abrindo configuracoes do Windows Update.
 pause
 goto sistema
 
-:defender_scan
-rem Executa um scan rapido com o Windows Defender via PowerShell
-powershell -command "Start-MpScan -ScanType QuickScan"
-echo Verificacao rapida do Windows Defender iniciada.
-pause
-goto sistema
-
 rem --- SEÇÃO DE IMPRESSORAS ---
 :impressoras
 cls
@@ -520,7 +655,8 @@ echo 5. Corrigir Erro 0x00000bcb
 echo 6. Corrigir Erro 0x00000709
 echo 7. Reiniciar Spooler de Impressao
 echo 8. Limpar Fila de Impressao e Reiniciar Spooler
-echo 9. Voltar para o menu principal
+echo 9. Instalar impressora / Abrir link de driver (Nova)
+echo A. Voltar para o menu principal
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
@@ -532,7 +668,8 @@ if "%opcao%"=="5" goto erro0bcb
 if "%opcao%"=="6" goto erro709 
 if "%opcao%"=="7" goto reiniciar_spooler
 if "%opcao%"=="8" goto limpar_e_reiniciar_spooler
-if "%opcao%"=="9" goto menu
+if "%opcao%"=="9" goto install_printer_oki
+if /i "%opcao%"=="a" goto menu
 echo Opcao invalida.
 pause
 goto impressoras
@@ -560,6 +697,15 @@ rem Abre o assistente para adicionar uma impressora de rede
 echo Abrindo o assistente para adicionar impressora de rede...
 RUNDLL32 PRINTUI.DLL,PrintUIEntry /in
 echo Siga as instrucoes na tela para adicionar a impressora.
+pause
+goto impressoras
+
+:install_printer_oki
+rem Abre o caminho de rede para os drivers da impressora OKI
+cls
+echo Abrindo pasta de instalacao da impressora OKI...
+start \\brprt001
+echo Selecione o driver ou instalador da impressora OKI conforme necessário.
 pause
 goto impressoras
 
