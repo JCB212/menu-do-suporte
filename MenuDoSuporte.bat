@@ -4,18 +4,18 @@ rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
-rem * FERRAMENTA HELP TO DESK V 0.9                            *
+rem * FERRAMENTA HELP TO DESK V 1.0                            *
 rem ************************************************************
 
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 0.9
+title FERRAMENTA HELP TO DESK V 1.0
 color 0A
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 0.9
+echo   FERRAMENTA HELP TO DESK V 1.0
 echo   Criado por Alice Dzindzik
 echo   Modificado por Jean Carlos De Jesus Barreto
 echo ==================================================
@@ -50,7 +50,7 @@ echo 9. Mapear unidade de rede
 echo A. Abrir configuracoes do Firewall
 echo B. Liberar porta 3050 (Firebird) no Firewall
 echo C. Abrir Visualizador de Eventos
-echo D. Ver adaptadores de rede (Nova)
+echo D. Ver adaptadores de rede
 echo E. Voltar para o menu principal
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
@@ -212,19 +212,19 @@ echo 6. Desinstalar programa
 echo 7. Gerenciar aplicativos com Winget
 echo 8. Backup rapido do Registro
 echo 9. Criar Ponto de Restauracao
-echo A. Limpeza de arquivos temporarios (Nova)
-echo B. Reset do Windows Update (Nova)
-echo C. Limpeza de logs de eventos (Nova)
-echo D. Ver status dos principais servicos (Nova)
-echo E. Backup dos logs de eventos (Nova)
-echo F. Visualizar dispositivos USB conectados (Nova)
-echo G. Abertura de chamado (Nova)
-echo H. Testar velocidade da internet (Nova)
-echo I. Verificar status do antivirus (Nova)
+echo A. Limpeza de arquivos temporarios
+echo B. Reset do Windows Update
+echo C. Limpeza de logs de eventos
+echo D. Ver status dos principais servicos
+echo E. Backup dos logs de eventos
+echo F. Visualizar dispositivos USB conectados
+echo G. Abertura de chamado
+echo H. Testar velocidade da internet
+echo I. Verificar status do antivirus
 echo J. Abrir Restauracao do Sistema
 echo K. Abrir Gerenciamento de Disco
-echo L. Abrir Gerenciador de Dispositivos (Nova)
-echo M. Abrir Gerenciador de Programas (Nova)
+echo L. Abrir Gerenciador de Dispositivos
+echo M. Abrir Gerenciador de Programas
 echo N. Abrir Diagnostico de Memoria
 echo O. Desfragmentar Disco
 echo P. Gerenciar Usuarios Locais
@@ -348,7 +348,7 @@ goto sistema
 :desinstalar_programa
 rem Lista os programas e desinstala o selecionado usando PowerShell
 echo Listando programas instalados (pode levar alguns segundos)...
-powershell -command "Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName,Publisher,InstallDate | Format-Table –AutoSize"
+powershell -command "Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName,Publisher,InstallDate | Format-Table -AutoSize"
 set /p "nome_programa=Digite o nome EXATO do programa para desinstalar: "
 wmic product where name="%nome_programa%" call uninstall /nointeractive
 pause
@@ -423,7 +423,7 @@ pause
 goto sistema
 
 :limpeza_temp
-rem Limpa arquivos temporarios (do IT Fast)
+rem Limpa arquivos temporarios
 cls
 echo Limpando arquivos temporarios...
 del /s /f /q "%TEMP%\*"
@@ -433,7 +433,7 @@ pause
 goto sistema
 
 :update_reset
-rem Reseta os componentes do Windows Update (do IT Fast)
+rem Reseta os componentes do Windows Update
 cls
 echo Resetando componentes do Windows Update...
 net stop wuauserv
@@ -451,7 +451,7 @@ pause
 goto sistema
 
 :limpar_logs
-rem Limpa todos os logs de eventos (do IT Fast)
+rem Limpa todos os logs de eventos
 cls
 echo Limpando logs de eventos...
 for /F "tokens=*" %%1 in ('wevtutil.exe el') do wevtutil.exe cl "%%1"
@@ -460,7 +460,7 @@ pause
 goto sistema
 
 :servicos_status
-rem Verifica o status dos servicos principais (do IT Fast)
+rem Verifica o status dos servicos principais
 cls
 echo Verificando status de servicos principais...
 sc query wuauserv
@@ -473,7 +473,7 @@ pause
 goto sistema
 
 :backup_logs_eventos
-rem Cria backup dos logs de eventos (do IT Fast)
+rem Cria backup dos logs de eventos
 cls
 echo Criando backup dos logs de eventos...
 mkdir C:\BackupLogs
@@ -484,7 +484,7 @@ pause
 goto sistema
 
 :usb_check
-rem Verifica dispositivos USB conectados (do IT Fast)
+rem Verifica dispositivos USB conectados
 @echo off
 cls
 echo Verificando dispositivos USB conectados...
@@ -500,21 +500,21 @@ pause
 goto sistema
 
 :abrir_chamado
-rem Abre o link para a pagina de abertura de chamado (do IT Fast)
+rem Abre o link para a pagina de abertura de chamado
 start https://dufryprod.service-now.com/dufry_sp?id=sub_ticket
 echo Abrindo pagina de abertura de chamado.
 pause
 goto sistema
 
 :testar_velocidade
-rem Abre o site para teste de velocidade (do IT Fast)
+rem Abre o site para teste de velocidade
 start https://www.fast.com
 echo Abrindo site de teste de velocidade.
 pause
 goto sistema
 
 :antivirus_status
-rem Verifica o status do Windows Defender (do IT Fast)
+rem Verifica o status do Windows Defender
 cls
 echo Verificando status do Windows Defender...
 powershell -command "Get-MpComputerStatus | Select AMServiceEnabled,AntivirusEnabled,RealTimeProtectionEnabled"
@@ -536,14 +536,14 @@ pause
 goto sistema
 
 :devmgmt_cpl
-rem Abre o Gerenciador de Dispositivos (Nova)
+rem Abre o Gerenciador de Dispositivos
 echo Abrindo Gerenciador de Dispositivos...
 start devmgmt.msc
 pause
 goto sistema
 
 :appwiz_cpl
-rem Abre a tela de programas instalados (Nova)
+rem Abre a tela de programas instalados
 echo Abrindo lista de programas instalados...
 start appwiz.cpl
 pause
@@ -648,20 +648,20 @@ rem --- SEÇÃO DE IMPRESSORAS ---
 cls
 echo =============== IMPRESSORAS ===============
 echo 1. Listar Impressoras Instaladas
-echo 2. Compartilhar Impressora na Rede
+echo 2. Compartilhar/Renomear Impressora na Rede
 echo 3. Adicionar impressora de rede
 echo 4. Corrigir Erro 0x0000011b
 echo 5. Corrigir Erro 0x00000bcb
 echo 6. Corrigir Erro 0x00000709
 echo 7. Reiniciar Spooler de Impressao
 echo 8. Limpar Fila de Impressao e Reiniciar Spooler
-echo 9. Instalar impressora / Abrir link de driver (Nova)
+echo 9. Instalar impressora / Abrir link de driver
 echo A. Voltar para o menu principal
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
 if "%opcao%"=="1" goto listar_impressoras
-if "%opcao%"=="2" goto compartilhar_impressora
+if "%opcao%"=="2" goto compartilhar_impressora_fluxo
 if "%opcao%"=="3" goto add_impressora
 if "%opcao%"=="4" goto erro11b
 if "%opcao%"=="5" goto erro0bcb
@@ -674,21 +674,45 @@ echo Opcao invalida.
 pause
 goto impressoras
 
+:compartilhar_impressora_fluxo
+rem Fluxo completo para compartilhar impressora, evitando o erro 0x00000709
+cls
+echo Tentando corrigir erro 0x00000709 antes de compartilhar...
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
+echo Correcao do erro 0x00000709 aplicada. Prosseguindo...
+echo.
+echo Impressoras disponiveis:
+powershell -command "Get-Printer | Format-Table Name,PortName,DriverName -AutoSize" | more
+echo.
+set /p "nomeAtual=Digite o NOME ATUAL da impressora: "
+set /p "opcao_renomear=Deseja RENOMEAR a impressora antes de compartilhar? (S/N): "
+if /i "%opcao_renomear%"=="S" goto renomear_impressora
+if /i "%opcao_renomear%"=="N" goto compartilhar_sem_renomear
+echo Opcao invalida.
+pause
+goto impressoras
+
+:renomear_impressora
+set /p "nomeNovo=Digite o NOVO NOME para a impressora: "
+powershell -Command "Rename-Printer -Name '%nomeAtual%' -NewName '%nomeNovo%'"
+echo Impressora renomeada para '%nomeNovo%'.
+set "nomeImpressora=%nomeNovo%"
+goto compartilhar_impressora_executar
+
+:compartilhar_sem_renomear
+set "nomeImpressora=%nomeAtual%"
+goto compartilhar_impressora_executar
+
+:compartilhar_impressora_executar
+powershell -Command "Set-Printer -Name '%nomeImpressora%' -Shared:$true -ShareName '%nomeImpressora%'"
+echo Impressora "%nomeImpressora%" compartilhada com sucesso.
+pause
+goto impressoras
+
 :listar_impressoras
 rem Lista todas as impressoras instaladas usando PowerShell
 echo Impressoras Instaladas:
 powershell -command "Get-Printer | Format-Table Name,PortName,DriverName -AutoSize" | more
-pause
-goto impressoras
-
-:compartilhar_impressora
-rem Lista as impressoras para o usuario escolher
-echo Impressoras disponiveis para compartilhamento:
-powershell -command "Get-Printer | Format-Table Name -AutoSize" | more
-set /p "nomeImpressora=Digite o NOME da impressora que deseja compartilhar: "
-rem Adiciona o comando para compartilhar a impressora
-powershell -Command "Set-Printer -Name '%nomeImpressora%' -Shared:$true -ShareName '%nomeImpressora%'"
-echo Impressora "%nomeImpressora%" compartilhada com sucesso.
 pause
 goto impressoras
 
