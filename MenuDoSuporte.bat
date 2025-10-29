@@ -2,26 +2,28 @@
 rem ************************************************************
 rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
+rem * Unificado por: Gemini (Assistente de IA)                 *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
-rem * FERRAMENTA HELP TO DESK V 1.1                            *
+rem * FERRAMENTA HELP TO DESK V 2.0 (UNIFICADA)                *
 rem ************************************************************
 
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 1.1
+title FERRAMENTA HELP TO DESK V 2.0 (UNIFICADA)
 color 0A
+setlocal enabledelayed!expansion
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 1.1
-echo   Criado por Alice Dzindzik
-echo   Modificado por Jean Carlos De Jesus Barreto
+echo   FERRAMENTA HELP TO DESK V 2.0 (UNIFICADA)
+echo   Criado por Alice Dzindzik e Jean Carlos
 echo ==================================================
 echo 1. Infraestrutura (Rede, Logs, Firewall)
 echo 2. Sistema (Manutencao, Reparo, Diagnostico)
 echo 3. Impressoras
+echo 0. Reparo de Base de Dados Firebird  <-- NOVA OPÇÃO
 echo 4. Sair
 echo ==================================================
 set /p "opcao=Escolha uma opcao: "
@@ -29,10 +31,119 @@ set /p "opcao=Escolha uma opcao: "
 if "%opcao%"=="1" goto infra
 if "%opcao%"=="2" goto sistema
 if "%opcao%"=="3" goto impressoras
+if "%opcao%"=="0" goto reparo_firebird  <-- CHAMADA PARA O NOVO BLOCO
 if "%opcao%"=="4" goto sair
 echo Opcao invalida.
 pause
 goto menu
+
+rem ************************************************************
+rem * BLOCO DE REPARO FIREBIRD (INTEGRADO DO FIREBIRD.BAT.BAT) *
+rem ************************************************************
+:reparo_firebird
+cls
+echo ================================================================
+echo   REPARO DE BASE FIREBIRD - SCRIPT SIMPLIFICADO [cite: 1]
+echo ================================================================
+echo.
+:: ==============================
+:: Solicita o caminho do Firebird
+:: ==============================
+set /p FIREBIRD_PATH=Digite o caminho da pasta BIN do Firebird (ex: C:\Program Files\Firebird\Firebird_2_5\bin): [cite: 2]
+if not exist "%FIREBIRD_PATH%" (
+    echo ERRO: Pasta nao encontrada.
+    pause
+    goto menu  :: Volta para o menu principal
+)
+echo Firebird localizado em: "%FIREBIRD_PATH%" [cite: 2]
+echo.
+:: ==============================
+:: Solicita o caminho do banco
+:: ==============================
+set /p DB_PATH=Digite o caminho completo do banco (ex: C:\TSD\Host\HOST.FDB): [cite: 3]
+if not exist "%DB_PATH%" (
+    echo ERRO: Banco nao encontrado. [cite: 3]
+    pause
+    goto menu  :: Volta para o menu principal
+)
+echo Banco localizado em: "%DB_PATH%" [cite: 3]
+echo.
+:: ==============================
+:: Define arquivos temporarios
+:: ==============================
+set BACKUP_FILE=%DB_PATH%.GBK [cite: 4]
+set NEW_DB=%DB_PATH:.FDB=_NOVO.FDB% [cite: 4]
+set USER=SYSDBA [cite: 4]
+set PASS=masterkey [cite: 4]
+
+echo ================================================================
+echo INICIANDO PROCESSO DE REPARO [cite: 4]
+echo ================================================================
+echo.
+:: ---------------------------------------------------
+:: Etapa 1 - Verificação de integridade
+:: ---------------------------------------------------
+echo [1/4] Verificando integridade... [cite: 5]
+"%FIREBIRD_PATH%\gfix" -v -full "%DB_PATH%" -user %USER% -pass %PASS% [cite: 5]
+if errorlevel 1 (
+    echo Erro na verificacao de integridade. [cite: 5]
+    pause
+    goto menu  :: Volta para o menu principal
+)
+echo OK. [cite: 5]
+echo. [cite: 6]
+
+:: ---------------------------------------------------
+:: Etapa 2 - Tentando correção leve
+:: ---------------------------------------------------
+echo [2/4] Tentando correção com gfix -mend... [cite: 6]
+"%FIREBIRD_PATH%\gfix" -mend "%DB_PATH%" -user %USER% -pass %PASS% [cite: 6]
+if errorlevel 1 (
+    echo Erro no reparo. [cite: 6]
+    pause
+    goto menu  :: Volta para o menu principal
+)
+echo OK. [cite: 6]
+echo. [cite: 7]
+
+:: ---------------------------------------------------
+:: Etapa 3 - Backup com GBAK
+:: ---------------------------------------------------
+echo [3/4] Criando backup limpo... [cite: 7]
+if exist "%BACKUP_FILE%" del "%BACKUP_FILE%" [cite: 7]
+"%FIREBIRD_PATH%\gbak" -b -v -ignore -garbage -limbo "%DB_PATH%" "%BACKUP_FILE%" -user %USER% -pass %PASS% [cite: 7]
+if errorlevel 1 (
+    echo Erro ao gerar backup. [cite: 7]
+    pause
+    goto menu  :: Volta para o menu principal
+)
+echo Backup criado: %BACKUP_FILE% [cite: 7]
+echo. [cite: 8]
+
+:: ---------------------------------------------------
+:: Etapa 4 - Restaurando base nova
+:: ---------------------------------------------------
+echo [4/4] Restaurando nova base de dados... [cite: 8]
+if exist "%NEW_DB%" del "%NEW_DB%" [cite: 8]
+"%FIREBIRD_PATH%\gbak" -c -v -z "%BACKUP_FILE%" "%NEW_DB%" -user %USER% -pass %PASS% [cite: 8]
+if errorlevel 1 (
+    echo Erro ao restaurar nova base. [cite: 8]
+    pause
+    goto menu  :: Volta para o menu principal
+)
+echo Nova base criada: %NEW_DB% [cite: 8]
+echo. [cite: 9]
+echo ================================================================ [cite: 9]
+echo [SUCESSO] Processo de reparo concluído com êxito! [cite: 9]
+echo Base original : %DB_PATH% [cite: 9]
+echo Base reparada  : %NEW_DB% [cite: 9]
+echo ================================================================ [cite: 9]
+pause
+goto menu  :: Volta para o menu principal
+
+rem ************************************************************
+rem * RESTANTE DO CÓDIGO DO MENUDOSUPORTE.BAT (MANUTENÇÃO)     *
+rem ************************************************************
 
 rem --- SEÇÃO DE INFRAESTRUTURA ---
 :infra
@@ -69,14 +180,14 @@ if /i "%opcao%"=="b" goto firebird_port
 if /i "%opcao%"=="c" goto eventlog
 if /i "%opcao%"=="d" goto ncpa_cpl
 if /i "%opcao%"=="e" goto menu
-echo Opcao invalida.
+echo Opcao invalida. [cite: 15]
 pause
 goto infra
 
 :ipall
 rem Exibe todas as configuracoes de IP e pagina a saida
 echo Exibindo informacoes de rede (pressione a barra de espaco para avancar)...
-ipconfig /all | more
+ipconfig /all | [cite: 16] more
 pause
 goto infra
 
@@ -85,12 +196,12 @@ rem Limpa o cache de DNS
 echo Executando ipconfig /flushdns...
 ipconfig /flushdns
 echo Cache DNS limpo com sucesso!
-pause
+pause [cite: 17]
 goto infra
 
 :flush_navegador
 rem Limpa o cache DNS dos navegadores Chrome e Firefox.
-echo Limpando cache do navegador...
+echo Limpando cache do navegador... [cite: 18]
 if exist "%LocalAppData%\Google\Chrome\User Data\Default\Cache" (
     del /s /q "%LocalAppData%\Google\Chrome\User Data\Default\Cache\*.*"
 )
@@ -101,7 +212,7 @@ if exist "%AppData%\Mozilla\Firefox\Profiles" (
         )
     )
 )
-echo Cache do navegador limpo.
+echo Cache do navegador limpo. [cite: 19]
 pause
 goto infra
 
@@ -123,7 +234,7 @@ goto infra
 rem Teste de conectividade simples com o Google
 echo Testando conexao com google.com...
 ping google.com -n 4
-echo Teste concluido!
+echo Teste concluido! [cite: 20]
 pause
 goto infra
 
@@ -134,23 +245,23 @@ netsh winsock reset
 netsh int ip reset
 ipconfig /release
 ipconfig /renew
-echo Eh necessario reiniciar o computador para que as alteracoes tenham efeito.
+echo Eh necessario reiniciar o computador para que as alteracoes tenham efeito. [cite: 21]
 pause
 goto infra
 
 :netstat_info
 rem Exibe as conexoes de rede ativas e as portas abertas
 echo Exibindo conexoes de rede ativas (pressione a barra de espaco para avancar)...
-netstat -ano | more
+netstat -ano | [cite: 22] more
 pause
 goto infra
 
 :mapear_rede
 rem Mapeia ou desconecta uma unidade de rede
-set /p "acao=Digite 'mapear' para mapear ou 'desconectar' para desconectar: "
+set /p "acao=Digite 'mapear' para mapear ou 'desconectar' para desconectar: " [cite: 23]
 if /i "%acao%"=="mapear" goto mapear_rede_executar
 if /i "%acao%"=="desconectar" goto desconectar_rede_executar
-echo Opcao invalida.
+echo Opcao invalida. [cite: 23]
 pause
 goto infra
 
@@ -158,14 +269,14 @@ goto infra
 set /p "letra=Digite a letra da unidade (ex: Z): "
 set /p "caminho=Digite o caminho da pasta compartilhada (ex: \\servidor\pasta): "
 net use %letra%: %caminho%
-echo Unidade mapeada com sucesso!
+echo Unidade mapeada com sucesso! [cite: 24]
 pause
 goto infra
 
 :desconectar_rede_executar
-set /p "letra=Digite a letra da unidade para desconectar (ex: Z): "
-net use %letra%: /delete
-echo Unidade desconectada com sucesso!
+set /p "letra=Digite a letra da unidade para desconectar (ex: Z): " [cite: 25]
+net use %letra%: /delete [cite: 25]
+echo Unidade desconectada com sucesso! [cite: 25]
 pause
 goto infra
 
@@ -178,10 +289,10 @@ goto infra
 
 :firebird_port
 rem Libera a porta 3050 para o Firebird no Firewall do Windows
-echo Adicionando regras de entrada e saida para a porta 3050 (Firebird)...
-netsh advfirewall firewall add rule name="Firebird_In" dir=in action=allow protocol=TCP localport=3050
-netsh advfirewall firewall add rule name="Firebird_Out" dir=out action=allow protocol=TCP localport=3050
-echo Regras do Firewall adicionadas com sucesso.
+echo Adicionando regras de entrada e saida para a porta 3050 (Firebird)... [cite: 26]
+netsh advfirewall firewall add rule name="Firebird_In" dir=in action=allow protocol=TCP localport=3050 [cite: 26]
+netsh advfirewall firewall add rule name="Firebird_Out" dir=out action=allow protocol=TCP localport=3050 [cite: 26]
+echo Regras do Firewall adicionadas com sucesso. [cite: 26]
 pause
 goto infra
 
@@ -215,7 +326,7 @@ echo 9. Criar Ponto de Restauracao
 echo A. Limpeza de arquivos temporarios
 echo B. Reset do Windows Update
 echo C. Limpeza de logs de eventos
-echo D. Ver status dos principais servicos
+echo D. Ver status dos principais servicos [cite: 27]
 echo E. Backup dos logs de eventos
 echo F. Visualizar dispositivos USB conectados
 echo G. Abertura de chamado
@@ -227,7 +338,7 @@ echo L. Abrir Gerenciador de Dispositivos
 echo M. Abrir Gerenciador de Programas
 echo N. Abrir Diagnostico de Memoria
 echo O. Desfragmentar Disco
-echo P. Gerenciar Usuarios Locais
+echo P. Gerenciar Usuarios Locais [cite: 29]
 echo Q. Atualizar Group Policy
 echo R. Testar velocidade de disco
 echo S. Fazer backup de drivers
@@ -236,7 +347,7 @@ echo U. Executar Comando Personalizado
 echo V. Liberar acesso a compartilhamentos (SMB)
 echo W. Compartilhamento avancado de pasta na rede
 echo X. Verificar Atualizacoes do Windows
-echo Y. Voltar para o menu principal
+echo Y. Voltar para o menu principal [cite: 28]
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
@@ -264,7 +375,7 @@ if /i "%opcao%"=="l" goto devmgmt_cpl
 if /i "%opcao%"=="m" goto appwiz_cpl
 if /i "%opcao%"=="n" goto memory_diag
 if /i "%opcao%"=="o" goto defrag_opcoes
-if /i "%opcao%"=="p" goto usermgmt
+if /i "%opcao%"=="p" goto usermgmt [cite: 29]
 if /i "%opcao%"=="q" goto updateGp
 if /i "%opcao%"=="r" goto disktest
 if /i "%opcao%"=="s" goto driverbackup
@@ -274,7 +385,7 @@ if /i "%opcao%"=="v" goto compartilhamento
 if /i "%opcao%"=="w" goto compartilhar_avancado
 if /i "%opcao%"=="x" goto windows_updates
 if /i "%opcao%"=="y" goto menu
-echo Opcao invalida.
+echo Opcao invalida. [cite: 30]
 pause
 goto sistema
 
@@ -293,7 +404,7 @@ del /f /s /q "%temp%\*.*"
 del /f /s /q "%SystemRoot%\SoftwareDistribution\Download\*.*"
 del /f /s /q "C:\Windows\Prefetch\*.*"
 cleanmgr /sagerun:1
-echo Limpeza concluida!
+echo Limpeza concluida! [cite: 31]
 pause
 
 echo Etapa 2: Executando SFC...
@@ -324,7 +435,7 @@ pause
 goto sistema
 
 :chkdsk_executar
-echo Isso pode levar algum tempo. Por favor, aguarde.
+echo Isso pode levar algum tempo. Por favor, aguarde. [cite: 32]
 chkdsk %drive%: /f /r
 echo Verificacao concluida!
 pause
@@ -334,7 +445,7 @@ goto sistema
 cls
 rem Exibe informacoes detalhadas do sistema
 echo Exibindo informacoes do sistema (pressione a barra de espaco para avancar)...
-systeminfo | more
+systeminfo | [cite: 33] more
 pause
 goto sistema
 
@@ -367,13 +478,13 @@ echo 5. Desinstalar um aplicativo
 echo 6. Voltar
 echo ==================================================
 set /p "opcao=Escolha uma opcao: "
-if "%opcao%"=="1" goto wingetlist
+if "%opcao%"=="1" goto wingetlist [cite: 34]
 if "%opcao%"=="2" goto wingetsearch
 if "%opcao%"=="3" goto wingetinstall
 if "%opcao%"=="4" goto wingetupgrade
 if "%opcao%"=="5" goto wingetuninstall
 if "%opcao%"=="6" goto sistema
-echo Opcao invalida.
+echo Opcao invalida. [cite: 35]
 pause
 goto winget_menu
 
@@ -384,7 +495,7 @@ goto winget_menu
 
 :wingetsearch
 set /p "appsearch=Digite o nome do aplicativo para procurar: "
-winget search "%appsearch%" | more
+winget search "%appsearch%" | [cite: 36] more
 pause
 goto winget_menu
 
@@ -418,7 +529,7 @@ cls
 rem Cria um ponto de restauracao
 echo Criando ponto de restauracao...
 wmic.exe /Namespace:\\root\default Path SystemRestore Call CreateRestorePoint "Ponto de Restauracao - Script TI", 100, 7
-echo Ponto de restauracao criado com sucesso!
+echo Ponto de restauracao criado com sucesso! [cite: 37]
 pause
 goto sistema
 
@@ -428,25 +539,25 @@ cls
 echo Limpando arquivos temporarios...
 del /s /f /q "%TEMP%\*"
 del /s /f /q "C:\Windows\Temp\*"
-echo Concluido.
+echo Concluido. [cite: 38]
 pause
 goto sistema
 
 :update_reset
 rem Reseta os componentes do Windows Update
 cls
-echo Resetando componentes do Windows Update...
-net stop wuauserv
-net stop cryptSvc
-net stop bits
-net stop msiserver
-ren C:\Windows\SoftwareDistribution SoftwareDistribution.old
-ren C:\Windows\System32\catroot2 catroot2.old
-net start wuauserv
-net start cryptSvc
-net start bits
-net start msiserver
-echo Concluido.
+echo Resetando componentes do Windows Update... [cite: 39]
+net stop wuauserv [cite: 39]
+net stop cryptSvc [cite: 39]
+net stop bits [cite: 39]
+net stop msiserver [cite: 39]
+ren C:\Windows\SoftwareDistribution SoftwareDistribution.old [cite: 39]
+ren C:\Windows\System32\catroot2 catroot2.old [cite: 39]
+net start wuauserv [cite: 39]
+net start cryptSvc [cite: 39]
+net start bits [cite: 39]
+net start msiserver [cite: 39]
+echo Concluido. [cite: 39]
 pause
 goto sistema
 
@@ -454,8 +565,8 @@ goto sistema
 rem Limpa todos os logs de eventos
 cls
 echo Limpando logs de eventos...
-for /F "tokens=*" %%1 in ('wevtutil.exe el') do wevtutil.exe cl "%%1"
-echo Concluido.
+for /F "tokens=*" %%1 in ('wevtutil.exe el') do wevtutil.exe cl "%%1" [cite: 40]
+echo Concluido. [cite: 40]
 pause
 goto sistema
 
@@ -489,7 +600,7 @@ rem Verifica dispositivos USB conectados
 cls
 echo Verificando dispositivos USB conectados...
 REM Verifica se há dispositivos USB conectados
-wmic path CIM_LogicalDevice where "Description like 'USB%'" get Name, Description | findstr /i "USB" >nul
+wmic path CIM_LogicalDevice where "Description like 'USB%'" get Name, Description | [cite: 41] findstr /i "USB" >nul
 if %errorlevel%==0 (
     echo Dispositivos USB conectados:
     wmic path CIM_LogicalDevice where "Description like 'USB%'" get Name, Description
@@ -502,14 +613,14 @@ goto sistema
 :abrir_chamado
 rem Abre o link para a pagina de abertura de chamado
 start https://dufryprod.service-now.com/dufry_sp?id=sub_ticket
-echo Abrindo pagina de abertura de chamado.
+echo Abrindo pagina de abertura de chamado. [cite: 42]
 pause
 goto sistema
 
 :testar_velocidade
 rem Abre o site para teste de velocidade
 start https://www.fast.com
-echo Abrindo site de teste de velocidade.
+echo Abrindo site de teste de velocidade. [cite: 43]
 pause
 goto sistema
 
@@ -565,7 +676,7 @@ pause
 goto sistema
 
 :defrag_executar
-echo Isso pode levar algum tempo. Por favor, aguarde.
+echo Isso pode levar algum tempo. Por favor, aguarde. [cite: 44]
 defrag %drive%: /O
 echo Desfragmentacao concluida!
 pause
@@ -596,10 +707,10 @@ goto sistema
 cls
 rem Backup de drivers
 echo Realizando backup de drivers...
-echo Isso pode levar algum tempo. Por favor, aguarde.
+echo Isso pode levar algum tempo. Por favor, aguarde. [cite: 45]
 mkdir C:\DriverBackup
 dism /online /export-driver /destination:C:\DriverBackup
-echo Backup de drivers concluido! Salvo em C:\DriverBackup
+echo Backup de drivers concluido! [cite: 46] Salvo em C:\DriverBackup [cite: 46]
 pause
 goto sistema
 
@@ -615,7 +726,7 @@ rem Abre um prompt de comando
 cls
 echo Abrindo prompt de comando para comandos personalizados...
 cmd.exe
-echo Retornando ao menu.
+echo Retornando ao menu. [cite: 47]
 pause
 goto sistema
 
@@ -623,7 +734,7 @@ goto sistema
 rem Executa comandos PowerShell para liberar acesso a compartilhamentos
 powershell -Command "Set-SmbClientConfiguration -RequireSecuritySignature $false -Confirm:$false"
 powershell -Command "Set-SmbClientConfiguration -EnableInsecureGuestLogons $true -Confirm:$false"
-echo Acesso a compartilhamentos liberado.
+echo Acesso a compartilhamentos liberado. [cite: 48]
 pause
 goto sistema
 
@@ -632,14 +743,14 @@ rem Comando para compartilhar uma pasta na rede com permissao total para 'Todos'
 set /p "pasta=Digite o caminho COMPLETO da pasta que deseja compartilhar (ex: C:\dados): "
 set /p "nome_compartilhamento=Digite o NOME do compartilhamento: "
 net share "%nome_compartilhamento%"="%pasta%" /GRANT:Everyone,FULL
-echo A pasta '%pasta%' foi compartilhada como '%nome_compartilhamento%' com acesso total para 'Todos'.
+echo A pasta '%pasta%' foi compartilhada como '%nome_compartilhamento%' com acesso total para 'Todos'. [cite: 49]
 pause
 goto sistema
 
 :windows_updates
 rem Abre a pagina de configuracoes do Windows Update
 start ms-settings:windowsupdate
-echo Abrindo configuracoes do Windows Update.
+echo Abrindo configuracoes do Windows Update. [cite: 50]
 pause
 goto sistema
 
@@ -656,7 +767,7 @@ echo 6. Corrigir Erro 0x00000709
 echo 7. Reiniciar Spooler de Impressao
 echo 8. Limpar Fila de Impressao e Reiniciar Spooler
 echo 9. Instalar impressora / Abrir link de driver
-echo A. Voltar para o menu principal
+echo A. Voltar para o menu principal [cite: 51]
 echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
@@ -669,7 +780,7 @@ if "%opcao%"=="6" goto erro709
 if "%opcao%"=="7" goto reiniciar_spooler
 if "%opcao%"=="8" goto limpar_e_reiniciar_spooler
 if "%opcao%"=="9" goto install_printer_oki
-if /i "%opcao%"=="a" goto menu
+if /i "%opcao%"=="a" goto menu [cite: 51]
 echo Opcao invalida.
 pause
 goto impressoras
@@ -680,7 +791,7 @@ setlocal enabledelayedexpansion
 cls
 echo Tentando corrigir erro 0x00000709 antes de compartilhar...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
-echo Correcao do erro 0x00000709 aplicada. Prosseguindo...
+echo Correcao do erro 0x00000709 aplicada. [cite: 52] Prosseguindo... [cite: 52]
 echo.
 
 :listar_impressoras_numeradas
@@ -690,14 +801,14 @@ echo   SELECIONAR IMPRESSORA PARA COMPARTILHAR
 echo ===========================================
 echo Impressoras disponiveis:
 echo.
-set "contador=0"
+set "contador=0" 
 for /f "delims=" %%I in ('powershell -command "Get-Printer | Select-Object -ExpandProperty Name"') do (
-    set /a contador+=1
-    set "impressora_!contador!=%%I"
-    echo !contador!. %%I
+    set /a contador+=1 
+    set "impressora_!contador!=%%I" 
+    echo !contador!. %%I 
 )
 echo.
-echo 0. Voltar
+echo 0. Voltar [cite: 54]
 echo ===========================================
 set /p "escolha=Escolha uma impressora pelo numero: "
 if "!escolha!"=="0" (
@@ -706,19 +817,19 @@ if "!escolha!"=="0" (
 )
 
 set "nome_impressora_original=!impressora_%escolha%!"
-if not defined nome_impressora_original (
-    echo Escolha invalida.
+if not defined nome_impressora_original ( [cite: 55]
+    echo Escolha invalida. [cite: 55]
     pause
     goto listar_impressoras_numeradas
 )
-echo Voce escolheu: "!nome_impressora_original!"
+echo Voce escolheu: "!nome_impressora_original!" [cite: 56]
 echo.
 
 :renomear_menu
-set /p "opcao_renomear=Deseja RENOMEAR esta impressora? (S/N): "
+set /p "opcao_renomear=Deseja RENOMEAR esta impressora? (S/N): " [cite: 57]
 if /i "!opcao_renomear!"=="S" goto renomear_impressora_prompt
 if /i "!opcao_renomear!"=="N" goto compartilhar_sem_renomear
-echo Opcao invalida.
+echo Opcao invalida. [cite: 57]
 pause
 goto renomear_menu
 
@@ -727,16 +838,16 @@ cls
 echo ===========================================
 echo   RENOMEAR IMPRESSORA
 echo ===========================================
-echo Nome atual: !nome_impressora_original!
-set /p "nome_impressora_novo=Digite o NOVO nome para a impressora: "
+echo Nome atual: !nome_impressora_original! [cite: 58]
+set /p "nome_impressora_novo=Digite o NOVO nome para a impressora: " [cite: 58]
 
 :renomear_sub_menu
 cls
 echo ===========================================
 echo   CONFIRMAR NOVO NOME
 echo ===========================================
-echo Novo nome: !nome_impressora_novo!
-echo.
+echo Novo nome: !nome_impressora_novo! [cite: 59]
+echo. [cite: 59]
 echo 1 - Salvar e Compartilhar
 echo 2 - Editar nome
 echo 3 - Voltar para pergunta anterior (S/N)
@@ -756,7 +867,7 @@ if "%opcao_salvar%"=="0" (
     endlocal
     goto impressoras
 )
-echo Opcao invalida.
+echo Opcao invalida. [cite: 60]
 pause
 goto renomear_sub_menu
 
@@ -766,7 +877,7 @@ goto compartilhar_final
 
 :compartilhar_final
 powershell -Command "Set-Printer -Name '%nome_final_compartilhar%' -Shared:$true -ShareName '%nome_final_compartilhar%'"
-echo Impressora "%nome_final_compartilhar%" compartilhada com sucesso.
+echo Impressora "%nome_final_compartilhar%" compartilhada com sucesso. [cite: 61]
 pause
 endlocal
 goto impressoras
@@ -774,7 +885,7 @@ goto impressoras
 :listar_impressoras
 rem Lista todas as impressoras instaladas usando PowerShell
 echo Impressoras Instaladas:
-powershell -command "Get-Printer | Format-Table Name,PortName,DriverName -AutoSize" | more
+powershell -command "Get-Printer | Format-Table Name,PortName,DriverName -AutoSize" | [cite: 62] more
 pause
 goto impressoras
 
@@ -782,7 +893,7 @@ goto impressoras
 rem Abre o assistente para adicionar uma impressora de rede
 echo Abrindo o assistente para adicionar impressora de rede...
 RUNDLL32 PRINTUI.DLL,PrintUIEntry /in
-echo Siga as instrucoes na tela para adicionar a impressora.
+echo Siga as instrucoes na tela para adicionar a impressora. [cite: 63]
 pause
 goto impressoras
 
@@ -791,28 +902,28 @@ rem Abre o caminho de rede para os drivers da impressora OKI
 cls
 echo Abrindo pasta de instalacao da impressora OKI...
 start \\brprt001
-echo Selecione o driver ou instalador da impressora OKI conforme necessário.
+echo Selecione o driver ou instalador da impressora OKI conforme necessário. [cite: 64]
 pause
 goto impressoras
 
 :erro11b
 rem Adiciona uma chave no registro para corrigir o erro 0x0000011b
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Print" /v RpcAuthnLevelPrivacyEnabled /t REG_DWORD /d 0 /f
-echo Erro 0x0000011b corrigido.
+echo Erro 0x0000011b corrigido. [cite: 65]
 pause
 goto impressoras
 
 :erro0bcb
 rem Adiciona uma chave no registro para corrigir o erro 0x00000bcb
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v RestrictDriverInstallationToAdministrators /t REG_DWORD /d 0 /f
-echo Erro 0x00000bcb corrigido.
+echo Erro 0x00000bcb corrigido. [cite: 66]
 pause
 goto impressoras
 
 :erro709
 rem Adiciona uma chave no registro para corrigir o erro 0x00000709
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
-echo Erro 0x00000709 corrigido.
+echo Erro 0x00000709 corrigido. [cite: 67]
 pause
 goto impressoras
 
@@ -821,26 +932,26 @@ rem Para, espera 3 segundos e reinicia o servico Spooler de Impressao
 net stop spooler
 timeout /t 3 >nul
 net start spooler
-echo Spooler reiniciado com sucesso.
+echo Spooler reiniciado com sucesso. [cite: 68]
 pause
 goto impressoras
 
 :limpar_e_reiniciar_spooler
 rem Para o spooler, apaga todos os arquivos da fila e reinicia o servico
-echo Parando o Spooler de Impressao...
-net stop spooler
-echo Apagando arquivos da fila de impressao...
-del /f /s /q "%SystemRoot%\System32\spool\PRINTERS\*.*"
-echo Reiniciando o Spooler de Impressao...
-net start spooler
-echo Fila de impressao limpa e Spooler reiniciado com sucesso.
+echo Parando o Spooler de Impressao... [cite: 69]
+net stop spooler [cite: 69]
+echo Apagando arquivos da fila de impressao... [cite: 69]
+del /f /s /q "%SystemRoot%\System32\spool\PRINTERS\*.*" [cite: 69]
+echo Reiniciando o Spooler de Impressao... [cite: 69]
+net start spooler [cite: 69]
+echo Fila de impressao limpa e Spooler reiniciado com sucesso. [cite: 69]
 pause
 goto impressoras
 
 rem --- SAIR DO SCRIPT ---
 :sair
 rem Apenas finaliza o script
-echo Obrigado por usar o utilizar a ferramenta de reparo!!
+echo Obrigado por usar o utilizar a ferramenta de reparo!! [cite: 70]
 pause
 exit
 
