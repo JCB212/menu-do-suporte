@@ -2,26 +2,28 @@
 rem ************************************************************
 rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
+rem * Atualizado por: Parceiro de Programacao (2026)           *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
-rem * FERRAMENTA HELP TO DESK V 1.1                            *
+rem * FERRAMENTA HELP TO DESK V 2.0 (2026)                     *
 rem ************************************************************
 
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 1.1
+title FERRAMENTA HELP TO DESK V 2.0 (2026)
 color 0A
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 1.1
+echo   FERRAMENTA HELP TO DESK V 2.0 (2026)
 echo   Criado por Alice Dzindzik
 echo   Modificado por Jean Carlos De Jesus Barreto
+echo   Atualizacao 2026: Correcoes de Impressora e Otimizacoes
 echo ==================================================
 echo 1. Infraestrutura (Rede, Logs, Firewall)
 echo 2. Sistema (Manutencao, Reparo, Diagnostico)
-echo 3. Impressoras
+echo 3. Impressoras (Correcoes e Compartilhamento)
 echo 4. Sair
 echo ==================================================
 set /p "opcao=Escolha uma opcao: "
@@ -390,12 +392,12 @@ goto winget_menu
 
 :wingetinstall
 set /p "appinstall=Digite o ID ou nome do aplicativo para instalar: "
-winget install "%appinstall%"
+winget install "%appinstall%" --accept-source-agreements --accept-package-agreements
 pause
 goto winget_menu
 
 :wingetupgrade
-winget upgrade --all
+winget upgrade --all --accept-source-agreements --accept-package-agreements
 pause
 goto winget_menu
 
@@ -646,18 +648,20 @@ goto sistema
 rem --- SEÇÃO DE IMPRESSORAS ---
 :impressoras
 cls
-echo =============== IMPRESSORAS ===============
+echo ==================================================
+echo   IMPRESSORAS (ATUALIZADO 2026)
+echo ==================================================
 echo 1. Listar Impressoras Instaladas
-echo 2. Compartilhar/Renomear Impressora na Rede
+echo 2. Compartilhar/Renomear Impressora na Rede (com correcao automatica)
 echo 3. Adicionar impressora de rede
-echo 4. Corrigir Erro 0x0000011b
-echo 5. Corrigir Erro 0x00000bcb
-echo 6. Corrigir Erro 0x00000709
+echo 4. Corrigir Erro 0x0000011b (Regedit + Spooler)
+echo 5. Corrigir Erro 0x00000bcb (Regedit + Spooler)
+echo 6. Corrigir Erro 0x00000709 (Regedit + Spooler)
 echo 7. Reiniciar Spooler de Impressao
 echo 8. Limpar Fila de Impressao e Reiniciar Spooler
 echo 9. Instalar impressora / Abrir link de driver
 echo A. Voltar para o menu principal
-echo ===========================================
+echo ==================================================
 set /p "opcao=Escolha uma opcao: "
 
 if "%opcao%"=="1" goto listar_impressoras
@@ -680,7 +684,11 @@ setlocal enabledelayedexpansion
 cls
 echo Tentando corrigir erro 0x00000709 antes de compartilhar...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
-echo Correcao do erro 0x00000709 aplicada. Prosseguindo...
+echo Reiniciando Spooler para aplicar correcao...
+net stop spooler /y >nul 2>&1
+timeout /t 2 >nul
+net start spooler >nul 2>&1
+echo Correcao aplicada. Prosseguindo...
 echo.
 
 :listar_impressoras_numeradas
@@ -796,23 +804,56 @@ pause
 goto impressoras
 
 :erro11b
-rem Adiciona uma chave no registro para corrigir o erro 0x0000011b
+cls
+echo ==================================================
+echo   CORRIGINDO ERRO 0x0000011b (ATUALIZADO 2026)
+echo ==================================================
+echo 1. Aplicando correcao no Registro (CVE-2021-1678)...
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Print" /v RpcAuthnLevelPrivacyEnabled /t REG_DWORD /d 0 /f
-echo Erro 0x0000011b corrigido.
+
+echo 2. Reiniciando o Spooler de Impressao...
+net stop spooler /y
+timeout /t 2 >nul
+net start spooler
+echo.
+echo Correcao aplicada com sucesso!
 pause
 goto impressoras
 
 :erro0bcb
-rem Adiciona uma chave no registro para corrigir o erro 0x00000bcb
+cls
+echo ==================================================
+echo   CORRIGINDO ERRO 0x00000bcb (ATUALIZADO 2026)
+echo ==================================================
+echo 1. Aplicando correcao para Point and Print...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v RestrictDriverInstallationToAdministrators /t REG_DWORD /d 0 /f
-echo Erro 0x00000bcb corrigido.
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v NoWarningNoElevationOnInstall /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v UpdatePromptSettings /t REG_DWORD /d 2 /f
+
+echo 2. Reiniciando o Spooler de Impressao...
+net stop spooler /y
+timeout /t 2 >nul
+net start spooler
+echo.
+echo Correcao aplicada com sucesso!
 pause
 goto impressoras
 
 :erro709
-rem Adiciona uma chave no registro para corrigir o erro 0x00000709
+cls
+echo ==================================================
+echo   CORRIGINDO ERRO 0x00000709 (ATUALIZADO 2026)
+echo ==================================================
+echo 1. Aplicando correcao RPC Named Pipes...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
-echo Erro 0x00000709 corrigido.
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcProtocols /t REG_DWORD /d 7 /f
+
+echo 2. Reiniciando o Spooler de Impressao...
+net stop spooler /y
+timeout /t 2 >nul
+net start spooler
+echo.
+echo Correcao aplicada com sucesso!
 pause
 goto impressoras
 
@@ -840,7 +881,7 @@ goto impressoras
 rem --- SAIR DO SCRIPT ---
 :sair
 rem Apenas finaliza o script
-echo Obrigado por usar o utilizar a ferramenta de reparo!!
+echo Obrigado por utilizar a ferramenta de reparo (Versao 2026)!!
 pause
 exit
 
