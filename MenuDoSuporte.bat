@@ -1,42 +1,66 @@
 @echo off
+setlocal enabledelayedexpansion
 rem ************************************************************
 rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
 rem * Atualizado por: Parceiro de Programacao (2026)           *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
-rem * FERRAMENTA HELP TO DESK V 2.0 (2026)                     *
+rem * FERRAMENTA HELP TO DESK V 4.0 ULTIMATE (2026)            *
 rem ************************************************************
 
+rem ============================================================
+rem VERIFICACAO DE ADMINISTRADOR (OBRIGATORIO)
+rem ============================================================
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    color 4F
+    echo ======================================================
+    echo [ERRO] O SCRIPT PRECISA DE PERMISSAO DE ADMINISTRADOR
+    echo ======================================================
+    echo Este script executa comandos de sistema, rede e registro.
+    echo Por favor, feche, clique com o botao direito e selecione:
+    echo "Executar como administrador"
+    echo ======================================================
+    pause
+    exit
+)
+
 rem Define o título da janela do prompt de comando
-title FERRAMENTA HELP TO DESK V 2.0 (2026)
+title FERRAMENTA HELP TO DESK V 4.0 ULTIMATE (2026)
 color 0A
 
 rem Define o ponto de entrada principal do menu
 :menu
 cls
 echo ==================================================
-echo   FERRAMENTA HELP TO DESK V 2.0 (2026)
+echo   FERRAMENTA HELP TO DESK V 4.0 ULTIMATE (2026)
 echo   Criado por Alice Dzindzik
 echo   Modificado por Jean Carlos De Jesus Barreto
-echo   Atualizacao 2026: Correcoes de Impressora e Otimizacoes
+echo   Atualizacao 2026: Win11, Winget Pro, Firebird Fix
 echo ==================================================
 echo 1. Infraestrutura (Rede, Logs, Firewall)
 echo 2. Sistema (Manutencao, Reparo, Diagnostico)
-echo 3. Impressoras (Correcoes e Compartilhamento)
-echo 4. Sair
+echo 3. Impressoras (Correcoes, Spooler, Compartilhamento)
+echo 4. Reparo Banco de Dados Firebird (Integrado)
+echo 5. Windows 11 e Seguranca (Novo 2026)
+echo 6. Gerenciador de Softwares Winget (Avancado)
+echo 7. Sair
 echo ==================================================
 set /p "opcao=Escolha uma opcao: "
 
 if "%opcao%"=="1" goto infra
 if "%opcao%"=="2" goto sistema
 if "%opcao%"=="3" goto impressoras
-if "%opcao%"=="4" goto sair
+if "%opcao%"=="4" goto menu_firebird_full
+if "%opcao%"=="5" goto win11_menu
+if "%opcao%"=="6" goto winget_menu
+if "%opcao%"=="7" goto sair
 echo Opcao invalida.
 pause
 goto menu
 
-rem --- SEÇÃO DE INFRAESTRUTURA ---
+rem --- SEÇÃO DE INFRAESTRUTURA (Original Preservada) ---
 :infra
 cls
 echo ================= INFRAESTRUTURA =================
@@ -46,7 +70,7 @@ echo 3. Limpar cache DNS do navegador
 echo 4. Ping Servidor
 echo 5. Rastrear rota para servidor (Pathping)
 echo 6. Testar conectividade de rede (Ping Google)
-echo 7. Resetar configuracoes de rede
+echo 7. Resetar configuracoes de rede (Winsock/IP)
 echo 8. Exibir conexoes de rede ativas (Netstat)
 echo 9. Mapear unidade de rede
 echo A. Abrir configuracoes do Firewall
@@ -159,7 +183,7 @@ goto infra
 :mapear_rede_executar
 set /p "letra=Digite a letra da unidade (ex: Z): "
 set /p "caminho=Digite o caminho da pasta compartilhada (ex: \\servidor\pasta): "
-net use %letra%: %caminho%
+net use %letra%: %caminho% /persistent:yes
 echo Unidade mapeada com sucesso!
 pause
 goto infra
@@ -201,7 +225,7 @@ start ncpa.cpl
 pause
 goto infra
 
-rem --- SEÇÃO DE SISTEMA ---
+rem --- SEÇÃO DE SISTEMA (Original Preservada) ---
 :sistema
 cls
 echo ================== SISTEMA ==================
@@ -210,7 +234,7 @@ echo 2. Lentidao e reparo (Limpeza + SFC + DISM)
 echo 3. Verificar e Reparar Disco (CHKDSK)
 echo 4. Exibir informacoes do sistema
 echo 5. Exibir espaco em disco
-echo 6. Desinstalar programa
+echo 6. Desinstalar programa (WMIC Legado)
 echo 7. Gerenciar aplicativos com Winget
 echo 8. Backup rapido do Registro
 echo 9. Criar Ponto de Restauracao
@@ -326,7 +350,8 @@ pause
 goto sistema
 
 :chkdsk_executar
-echo Isso pode levar algum tempo. Por favor, aguarde.
+echo Isso pode levar algum tempo.
+echo Por favor, aguarde.
 chkdsk %drive%: /f /r
 echo Verificacao concluida!
 pause
@@ -355,57 +380,6 @@ set /p "nome_programa=Digite o nome EXATO do programa para desinstalar: "
 wmic product where name="%nome_programa%" call uninstall /nointeractive
 pause
 goto sistema
-
-:winget_menu
-cls
-echo ==================================================
-echo   GERENCIADOR DE APLICATIVOS COM WINGET
-echo ==================================================
-echo 1. Listar aplicativos instalados
-echo 2. Procurar por um aplicativo
-echo 3. Instalar um aplicativo
-echo 4. Atualizar todos os aplicativos
-echo 5. Desinstalar um aplicativo
-echo 6. Voltar
-echo ==================================================
-set /p "opcao=Escolha uma opcao: "
-if "%opcao%"=="1" goto wingetlist
-if "%opcao%"=="2" goto wingetsearch
-if "%opcao%"=="3" goto wingetinstall
-if "%opcao%"=="4" goto wingetupgrade
-if "%opcao%"=="5" goto wingetuninstall
-if "%opcao%"=="6" goto sistema
-echo Opcao invalida.
-pause
-goto winget_menu
-
-:wingetlist
-winget list | more
-pause
-goto winget_menu
-
-:wingetsearch
-set /p "appsearch=Digite o nome do aplicativo para procurar: "
-winget search "%appsearch%" | more
-pause
-goto winget_menu
-
-:wingetinstall
-set /p "appinstall=Digite o ID ou nome do aplicativo para instalar: "
-winget install "%appinstall%" --accept-source-agreements --accept-package-agreements
-pause
-goto winget_menu
-
-:wingetupgrade
-winget upgrade --all --accept-source-agreements --accept-package-agreements
-pause
-goto winget_menu
-
-:wingetuninstall
-set /p "appuninstall=Digite o ID ou nome do aplicativo para desinstalar: "
-winget uninstall "%appuninstall%"
-pause
-goto winget_menu
 
 :backup_registro
 rem Realiza um backup rapido do registro
@@ -567,7 +541,8 @@ pause
 goto sistema
 
 :defrag_executar
-echo Isso pode levar algum tempo. Por favor, aguarde.
+echo Isso pode levar algum tempo.
+echo Por favor, aguarde.
 defrag %drive%: /O
 echo Desfragmentacao concluida!
 pause
@@ -598,10 +573,12 @@ goto sistema
 cls
 rem Backup de drivers
 echo Realizando backup de drivers...
-echo Isso pode levar algum tempo. Por favor, aguarde.
+echo Isso pode levar algum tempo.
+echo Por favor, aguarde.
 mkdir C:\DriverBackup
 dism /online /export-driver /destination:C:\DriverBackup
-echo Backup de drivers concluido! Salvo em C:\DriverBackup
+echo Backup de drivers concluido!
+echo Salvo em C:\DriverBackup
 pause
 goto sistema
 
@@ -645,23 +622,21 @@ echo Abrindo configuracoes do Windows Update.
 pause
 goto sistema
 
-rem --- SEÇÃO DE IMPRESSORAS ---
+rem --- SEÇÃO DE IMPRESSORAS (Completamente Revisada e Corrigida) ---
 :impressoras
 cls
-echo ==================================================
-echo   IMPRESSORAS (ATUALIZADO 2026)
-echo ==================================================
+echo =============== IMPRESSORAS ===============
 echo 1. Listar Impressoras Instaladas
 echo 2. Compartilhar/Renomear Impressora na Rede (com correcao automatica)
 echo 3. Adicionar impressora de rede
-echo 4. Corrigir Erro 0x0000011b (Regedit + Spooler)
-echo 5. Corrigir Erro 0x00000bcb (Regedit + Spooler)
-echo 6. Corrigir Erro 0x00000709 (Regedit + Spooler)
+echo 4. Corrigir Erro 0x0000011b (Chave Regedit + Reinicio Spooler)
+echo 5. Corrigir Erro 0x00000bcb (Point/Print + Reinicio Spooler)
+echo 6. Corrigir Erro 0x00000709 (RPC Pipes + Reinicio Spooler)
 echo 7. Reiniciar Spooler de Impressao
 echo 8. Limpar Fila de Impressao e Reiniciar Spooler
 echo 9. Instalar impressora / Abrir link de driver
 echo A. Voltar para o menu principal
-echo ==================================================
+echo ===========================================
 set /p "opcao=Escolha uma opcao: "
 
 if "%opcao%"=="1" goto listar_impressoras
@@ -684,11 +659,11 @@ setlocal enabledelayedexpansion
 cls
 echo Tentando corrigir erro 0x00000709 antes de compartilhar...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
-echo Reiniciando Spooler para aplicar correcao...
+echo Correcao do registro aplicada. Reiniciando spooler...
 net stop spooler /y >nul 2>&1
 timeout /t 2 >nul
 net start spooler >nul 2>&1
-echo Correcao aplicada. Prosseguindo...
+echo Spooler reiniciado. Prosseguindo...
 echo.
 
 :listar_impressoras_numeradas
@@ -805,60 +780,63 @@ goto impressoras
 
 :erro11b
 cls
-echo ==================================================
-echo   CORRIGINDO ERRO 0x0000011b (ATUALIZADO 2026)
-echo ==================================================
-echo 1. Aplicando correcao no Registro (CVE-2021-1678)...
+rem Correcao completa erro 0x11b
+echo ==========================================
+echo APLICANDO CORRECAO ERRO 0x0000011b (RPC Privacy)
+echo ==========================================
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Print" /v RpcAuthnLevelPrivacyEnabled /t REG_DWORD /d 0 /f
-
-echo 2. Reiniciando o Spooler de Impressao...
+echo Chave de registro adicionada.
+echo.
+echo Reiniciando o Spooler de Impressao para validar...
 net stop spooler /y
 timeout /t 2 >nul
 net start spooler
-echo.
-echo Correcao aplicada com sucesso!
+echo Correcao aplicada e servico reiniciado!
 pause
 goto impressoras
 
 :erro0bcb
 cls
-echo ==================================================
-echo   CORRIGINDO ERRO 0x00000bcb (ATUALIZADO 2026)
-echo ==================================================
-echo 1. Aplicando correcao para Point and Print...
+rem Correcao completa erro 0xbcb
+echo ==========================================
+echo APLICANDO CORRECAO ERRO 0x00000bcb (Point and Print)
+echo ==========================================
+echo Adicionando permissoes para drivers sem elevacao...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v RestrictDriverInstallationToAdministrators /t REG_DWORD /d 0 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v NoWarningNoElevationOnInstall /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint" /v UpdatePromptSettings /t REG_DWORD /d 2 /f
-
-echo 2. Reiniciando o Spooler de Impressao...
+echo Chaves de registro adicionadas.
+echo.
+echo Reiniciando o Spooler de Impressao para validar...
 net stop spooler /y
 timeout /t 2 >nul
 net start spooler
-echo.
-echo Correcao aplicada com sucesso!
+echo Correcao aplicada e servico reiniciado!
 pause
 goto impressoras
 
 :erro709
 cls
-echo ==================================================
-echo   CORRIGINDO ERRO 0x00000709 (ATUALIZADO 2026)
-echo ==================================================
-echo 1. Aplicando correcao RPC Named Pipes...
+rem Correcao completa erro 0x709
+echo ==========================================
+echo APLICANDO CORRECAO ERRO 0x00000709 (RPC Named Pipes)
+echo ==========================================
+echo Forcando protocolo Named Pipes...
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcUseNamedPipeProtocol /t REG_DWORD /d 1 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" /v RpcProtocols /t REG_DWORD /d 7 /f
-
-echo 2. Reiniciando o Spooler de Impressao...
+echo Chaves de registro adicionadas.
+echo.
+echo Reiniciando o Spooler de Impressao para validar...
 net stop spooler /y
 timeout /t 2 >nul
 net start spooler
-echo.
-echo Correcao aplicada com sucesso!
+echo Correcao aplicada e servico reiniciado!
 pause
 goto impressoras
 
 :reiniciar_spooler
 rem Para, espera 3 segundos e reinicia o servico Spooler de Impressao
+echo Reiniciando spooler...
 net stop spooler
 timeout /t 3 >nul
 net start spooler
@@ -870,7 +848,7 @@ goto impressoras
 rem Para o spooler, apaga todos os arquivos da fila e reinicia o servico
 echo Parando o Spooler de Impressao...
 net stop spooler
-echo Apagando arquivos da fila de impressao...
+echo Apagando arquivos da fila de impressao (travados)...
 del /f /s /q "%SystemRoot%\System32\spool\PRINTERS\*.*"
 echo Reiniciando o Spooler de Impressao...
 net start spooler
@@ -878,10 +856,245 @@ echo Fila de impressao limpa e Spooler reiniciado com sucesso.
 pause
 goto impressoras
 
+rem --- SEÇÃO FIREBIRD REPAIR (INTEGRADO DO SCRIPT FIREBID.BAT) ---
+:menu_firebird_full
+cls
+echo ================================================================
+echo   REPARO DE BASE FIREBIRD (MODULO INTEGRADO)
+echo ================================================================
+echo 1. Iniciar Assistente de Reparo (GFIX/GBAK)
+echo 2. Voltar ao Menu Principal
+echo ================================================================
+set /p "fbop=Escolha: "
+if "%fbop%"=="1" goto firebird_repair_start
+if "%fbop%"=="2" goto menu
+goto menu_firebird_full
+
+:firebird_repair_start
+setlocal enabledelayedexpansion
+echo.
+echo ==============================
+echo 1. CAMINHO DO FIREBIRD
+echo ==============================
+set /p FIREBIRD_PATH=Digite o caminho da pasta BIN do Firebird (ex: C:\Program Files\Firebird\Firebird_2_5\bin): 
+if not exist "%FIREBIRD_PATH%" (
+    echo ERRO: Pasta nao encontrada.
+    pause
+    goto menu_firebird_full
+)
+echo Firebird localizado em: "%FIREBIRD_PATH%"
+echo.
+echo ==============================
+echo 2. CAMINHO DO BANCO DE DADOS
+echo ==============================
+set /p DB_PATH=Digite o caminho completo do banco (ex: C:\TSD\Host\HOST.FDB): 
+if not exist "%DB_PATH%" (
+    echo ERRO: Banco nao encontrado.
+    pause
+    goto menu_firebird_full
+)
+echo Banco localizado em: "%DB_PATH%"
+echo.
+rem Define arquivos temporarios
+set BACKUP_FILE=%DB_PATH%.GBK
+set NEW_DB=%DB_PATH:.FDB=_NOVO.FDB%
+set USER=SYSDBA
+set PASS=masterkey
+
+echo ================================================================
+echo INICIANDO PROCESSO DE REPARO
+echo ================================================================
+echo.
+echo [1/4] Verificando integridade...
+"%FIREBIRD_PATH%\gfix" -v -full "%DB_PATH%" -user %USER% -pass %PASS%
+if errorlevel 1 (
+    echo Erro na verificacao de integridade.
+    pause
+    goto menu_firebird_full
+)
+echo OK.
+echo.
+
+echo [2/4] Tentando correcao com gfix -mend...
+"%FIREBIRD_PATH%\gfix" -mend "%DB_PATH%" -user %USER% -pass %PASS%
+if errorlevel 1 (
+    echo Erro no reparo.
+    pause
+    goto menu_firebird_full
+)
+echo OK.
+echo.
+
+echo [3/4] Criando backup limpo...
+if exist "%BACKUP_FILE%" del "%BACKUP_FILE%"
+"%FIREBIRD_PATH%\gbak" -b -v -ignore -garbage -limbo "%DB_PATH%" "%BACKUP_FILE%" -user %USER% -pass %PASS%
+if errorlevel 1 (
+    echo Erro ao gerar backup.
+    pause
+    goto menu_firebird_full
+)
+echo Backup criado: %BACKUP_FILE%
+echo.
+
+echo [4/4] Restaurando nova base de dados...
+if exist "%NEW_DB%" del "%NEW_DB%"
+"%FIREBIRD_PATH%\gbak" -c -v -z "%BACKUP_FILE%" "%NEW_DB%" -user %USER% -pass %PASS%
+if errorlevel 1 (
+    echo Erro ao restaurar nova base.
+    pause
+    goto menu_firebird_full
+)
+echo Nova base criada: %NEW_DB%
+echo.
+echo ================================================================
+echo [SUCESSO] Processo de reparo concluido com exito!
+echo Base original : %DB_PATH%
+echo Base reparada : %NEW_DB%
+echo ================================================================
+pause
+endlocal
+goto menu
+
+rem --- SEÇÃO WINDOWS 11 E SEGURANÇA (NOVO 2026) ---
+:win11_menu
+cls
+echo ==================================================
+echo   WINDOWS 11 E SEGURANCA (NOVO)
+echo ==================================================
+echo 1. Desbloquear arquivos baixados (Smart App Control Fix)
+echo 2. Reiniciar Explorer e Pesquisa (Correcao UI Travada)
+echo 3. Desativar Verificacao SmartScreen (Temporario)
+echo 4. Restaurar SmartScreen (Padrao)
+echo 5. Desativar UAC (Requer Reinicio)
+echo 6. Reativar UAC (Padrao)
+echo 7. Voltar
+echo ==================================================
+set /p "opcao=Opcao: "
+
+if "%opcao%"=="1" goto win11_unblock
+if "%opcao%"=="2" goto win11_restart_ui
+if "%opcao%"=="3" goto win11_smartscreen_off
+if "%opcao%"=="4" goto win11_smartscreen_on
+if "%opcao%"=="5" goto uac_off
+if "%opcao%"=="6" goto uac_on
+if "%opcao%"=="7" goto menu
+goto win11_menu
+
+:win11_unblock
+echo Tentando desbloquear arquivos na pasta Downloads...
+echo Isso remove a marca "Zone.Identifier" que bloqueia execucao.
+powershell -Command "Get-ChildItem -Path '$env:USERPROFILE\Downloads' -Recurse | Unblock-File"
+echo Feito. Tente executar o programa novamente.
+pause
+goto win11_menu
+
+:win11_restart_ui
+echo Matando processos de UI (Explorer, SearchHost, StartMenu)...
+taskkill /f /im explorer.exe
+taskkill /f /im SearchHost.exe
+taskkill /f /im StartMenuExperienceHost.exe
+echo Reiniciando Explorer...
+start explorer.exe
+echo Aguarde o carregamento da barra de tarefas.
+pause
+goto win11_menu
+
+:win11_smartscreen_off
+echo Desativando SmartScreen (Explorer)...
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /v SmartScreenEnabled /t REG_SZ /d "Off" /f
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\AppHost" /v EnableWebContentEvaluation /t REG_DWORD /d 0 /f
+echo SmartScreen relaxado. Lembre-se de reativar apos a instalacao.
+pause
+goto win11_menu
+
+:win11_smartscreen_on
+echo Restaurando SmartScreen...
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" /v SmartScreenEnabled /t REG_SZ /d "Warn" /f
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\AppHost" /v EnableWebContentEvaluation /f
+echo Restaurado.
+pause
+goto win11_menu
+
+:uac_off
+echo Desativando UAC...
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f
+echo UAC Desativado. REINICIE O PC para surtir efeito.
+pause
+goto win11_menu
+
+:uac_on
+echo Ativando UAC...
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 1 /f
+echo UAC Ativado. REINICIE O PC.
+pause
+goto win11_menu
+
+rem --- SEÇÃO WINGET EXPANDIDA (2026) ---
+:winget_menu
+cls
+echo ==================================================
+echo   GERENCIADOR DE APLICATIVOS COM WINGET
+echo ==================================================
+echo 1. Listar aplicativos instalados
+echo 2. Procurar por um aplicativo (Busca por nome)
+echo 3. Instalar um aplicativo (ID ou Nome)
+echo 4. Atualizar todos os aplicativos (Modo Turbo)
+echo 5. Desinstalar um aplicativo
+echo 6. Voltar
+echo ==================================================
+set /p "opcao=Escolha uma opcao: "
+if "%opcao%"=="1" goto wingetlist
+if "%opcao%"=="2" goto wingetsearch
+if "%opcao%"=="3" goto wingetinstall
+if "%opcao%"=="4" goto wingetupgrade_all
+if "%opcao%"=="5" goto wingetuninstall
+if "%opcao%"=="6" goto menu
+echo Opcao invalida.
+pause
+goto winget_menu
+
+:wingetlist
+winget list | more
+pause
+goto winget_menu
+
+:wingetsearch
+echo Digite o nome (ou parte do nome) do programa.
+set /p "appsearch=Busca: "
+echo Buscando "%appsearch%" nos repositorios...
+winget search "%appsearch%" | more
+pause
+goto winget_menu
+
+:wingetinstall
+set /p "appinstall=Digite o ID ou nome do aplicativo para instalar: "
+echo Instalando... (Aceitando licenas automaticamente)
+winget install "%appinstall%" --accept-source-agreements --accept-package-agreements
+pause
+goto winget_menu
+
+:wingetupgrade_all
+echo =====================================================
+echo INICIANDO ATUALIZACAO TOTAL DO SISTEMA
+echo Isso buscara updates para TODOS os programas detectados.
+echo =====================================================
+echo O parametro --include-unknown força a verificacao de versoes desconhecidas.
+winget upgrade --all --include-unknown --accept-source-agreements --accept-package-agreements
+echo.
+echo Processo de atualizacao finalizado.
+pause
+goto winget_menu
+
+:wingetuninstall
+set /p "appuninstall=Digite o ID ou nome do aplicativo para desinstalar: "
+winget uninstall "%appuninstall%"
+pause
+goto winget_menu
+
 rem --- SAIR DO SCRIPT ---
 :sair
 rem Apenas finaliza o script
-echo Obrigado por utilizar a ferramenta de reparo (Versao 2026)!!
+echo Obrigado por usar o utilizar a ferramenta de reparo (Versao 2026)!!
 pause
 exit
 
