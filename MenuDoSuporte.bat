@@ -3,7 +3,6 @@ setlocal enabledelayedexpansion
 rem ************************************************************
 rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
-rem * Atualizado por: Parceiro de Programacao (2026)           *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
 rem * FERRAMENTA HELP TO DESK V 4.0 ULTIMATE (2026)            *
