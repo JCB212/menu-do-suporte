@@ -1,7 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
 rem ************************************************************
-rem * Criado por: Alice Dzindzik                               *
 rem * Modificado por: Jean Carlos De Jesus Barreto             *
 rem * GitHub: AliceDzindzik                                    *
 rem * GitHub: JCB212                                           *
