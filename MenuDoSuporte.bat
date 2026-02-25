@@ -32,7 +32,6 @@ rem Define o ponto de entrada principal do menu
 cls
 echo ==================================================
 echo   FERRAMENTA HELP TO DESK V 4.0 ULTIMATE (2026)
-echo   Criado por Alice Dzindzik
 echo   Modificado por Jean Carlos De Jesus Barreto
 echo   Atualizacao 2026: Win11, Winget Pro, Firebird Fix
 echo ==================================================
