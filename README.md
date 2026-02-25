@@ -1,72 +1,99 @@
-# menu-do-suporte
+# 🛠️ Help To Desk v4.0 Ultimate (2026)
 
-Script em batch (.bat) interativo para otimizar o suporte técnico em ambientes Windows. Ele automatiza uma série de tarefas de diagnóstico e correção de problemas comuns, aumentando a eficiência e reduzindo erros humanos.
+> **Suporte Técnico Automatizado para Windows 10 & 11**  
+> Ferramenta robusta para diagnóstico de rede, manutenção de sistema, gestão de impressoras e reparo de bases Firebird.
 
-Este script é uma ferramenta poderosa para técnicos de suporte, analistas de TI e administradores de rede, oferecendo uma interface de menu simples para executar comandos complexos e solucionar problemas de forma padronizada.
+---
 
-## Funcionalidades
+## 📋 Sobre o Projeto
 
-### 1. Rede
+**Help To Desk** é um script de automação avançado criado para centralizar tarefas críticas de TI em um menu interativo, seguro e eficiente.
 
-**Diagnóstico:**
+A versão **2026 (v4.0 Ultimate)** foi otimizada para:
 
-- Exibe informações de rede completas (`ipconfig /all`)
-- Limpa o cache DNS (`ipconfig /flushdns`)
-- Realiza ping em um servidor específico
-- Exibe a tabela de roteamento de rede
+- Novas camadas de segurança do Windows 11  
+- Automação moderna via Winget  
+- Manutenção corporativa e suporte técnico profissional  
 
-**Correção:**
+---
 
-- Reseta as configurações de rede (Winsock e IP)
+## 🚀 Funcionalidades
 
-### 2. Impressoras
+### 🌐 Infraestrutura & Redes
+- Diagnóstico completo de rede (IP, Netstat, adaptadores)
+- Flush DNS e limpeza de cache de navegadores
+- Testes de conectividade (Ping, PathPing)
+- Liberação de portas no Firewall (ex: 3050 – Firebird)
 
-**Gerenciamento:**
+### 💻 Manutenção de Sistema
+- SFC, DISM e CHKDSK automatizados
+- Limpeza de temporários e logs
+- Reset do Windows Update
+- Backup do Registro e drivers
+- Criação de ponto de restauração
 
-- Lista todas as impressoras instaladas no sistema
-- Oferece uma opção interativa para compartilhar qualquer impressora na rede
-
-**Correção de Erros Comuns:**
-
-- Solução automática para os erros de impressão:
+### 🖨️ Gestão de Impressoras (Fix 2026)
+- Correção automática dos erros:
   - 0x0000011b
   - 0x00000bcb
   - 0x00000709
-- Reinicia o serviço de Spooler de Impressão
-- Opção completa para:
-  - Parar o Spooler
-  - Apagar todos os arquivos de impressão da fila
-  - Reiniciar o Spooler
-  - Corrigindo problemas de documentos travados
+- Compartilhamento e permissões via PowerShell
 
-### 3. Sistema
+### 🔥 Firebird Repair Module
+- Assistente GFIX / GBAK
+- Verificação e correção de bases .FDB
+- Backup e restauração guiados
 
-**Manutenção e Diagnóstico:**
+### 📦 Winget & Softwares
+- Instalação, busca e remoção de aplicativos
+- Atualização global:
+```bash
+winget upgrade --all
+```
 
-- Reinicia o computador
-- Executa uma rotina de lentidão:
-  - Abre pastas temporárias
-  - Limpa arquivos indesejados
-- Executa o `sfc /scannow` para verificar a integridade do sistema
-- Força a atualização da Política de Grupo (`gpupdate /force`)
-- Lista os processos com maior uso de CPU
+---
 
-**Configuração Avançada:**
+## 🧭 Estrutura de Menus
 
-- Libera o acesso a compartilhamentos de arquivos via SMB entre versões do Windows
-- Permite o compartilhamento avançado de qualquer pasta na rede com permissão total
-- Adiciona regras de entrada e saída no Firewall do Windows para liberar a porta **3050**, usada pelo banco de dados **Firebird**
+| Opção | Módulo         | Descrição |
+|-----:|---------------|-----------|
+| 1 | Infraestrutura | Rede e Firewall |
+| 2 | Sistema | Manutenção e Diagnóstico |
+| 3 | Impressoras | Spooler e Correções |
+| 4 | Firebird | Reparo de Banco |
+| 5 | Windows 11 | Segurança e UI |
+| 6 | Winget | Softwares |
 
-## Requisitos
+---
 
-- Executar o script como **administrador**
-- Compatível com **Windows 10** e **Windows 11**
+## ⚠️ Pré-requisitos
 
-## Como usar
+- Windows 10 ou 11
+- Execução obrigatória como Administrador
 
-1. Clique duas vezes no arquivo `.bat` ou execute-o a partir do terminal como administrador.
-2. Um menu interativo será exibido.
-3. Digite o número correspondente à opção desejada.
-4. O script executará automaticamente as ações selecionadas.
+---
 
-> ⚠️ **Observação**: O script utiliza comandos do **PowerShell** em algumas opções para obter resultados mais detalhados e realizar configurações avançadas.
+## 🔐 Verificação de Privilégios
+
+```bat
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [ERRO] Requer Administrador
+    pause
+    exit /b
+)
+```
+
+---
+
+## 👥 Público-Alvo
+
+- Técnicos de Suporte
+- Analistas de TI
+- Administradores de Sistemas
+
+---
+
+## 📌 Observações
+
+Projeto focado em padronização, agilidade e segurança operacional.
